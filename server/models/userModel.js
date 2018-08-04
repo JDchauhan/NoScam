@@ -126,7 +126,4 @@ var UserSchema = new Schema({
   }
 });
 
-//module.exports = mongoose.model('user', UserSchema, 'users');
-mongoose.model('user', UserSchema, 'user');
-
-module.exports = mySchema;
+module.exports = mongoose.model('user', UserSchema, 'users');
