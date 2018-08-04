@@ -72,6 +72,7 @@ var UserSchema = new Schema({
     minlength: [3, 'email is atleast of 3 characters'],
     maxlength: [30, 'email does not exceeds 30 characters'],
     match: /\S+@\S+\.\S+/,
+    unique: true,
     required: [true, 'please enter your email']
   },
   isVerifiedEmail: {
@@ -83,6 +84,7 @@ var UserSchema = new Schema({
   },
   mobile: {
     type: Number,
+    unique: true,
     min: [6999999999, 'not a valid mobile number'],
     max: [9999999999, 'not a valid mobile number'],
     required: [true, 'please enter your mobile number']
@@ -96,7 +98,7 @@ var UserSchema = new Schema({
     enum: ['buyer', 'seller']
   },
   balance: {
-    type: mongoose.Schema.Types.Double,
+    type: Number,
     default: 0.0
   },
   maxOrderSize: {

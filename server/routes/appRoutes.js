@@ -1,6 +1,7 @@
 'use strict';
 module.exports = function (app) {
     var responses = require('../helper/responses');
+    var User = require('../controllers/userController');
 
     var errors, results;
 
@@ -11,6 +12,8 @@ module.exports = function (app) {
         };
         return responses.successMsg(res, results);
     });
+
+    app.post('/user', User.register);
 
     // star routes
     app.get('*', function (req, res) {

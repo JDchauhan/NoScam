@@ -5,7 +5,7 @@ var express = require('express'),
     bodyParser = require('body-parser');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.NOSCAM_DB_CONNECTION, {
+mongoose.connect(process.env.DB_CONNECTION_NOSCAM, {
     useNewUrlParser: true
 });
 

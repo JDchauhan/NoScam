@@ -24,13 +24,13 @@ var Disputes = new Schema({
     type: String,
   },
   refund: {
-    type: mongoose.Schema.Types.Double,
+    type: Number,
   },
   secondaryRelease: {
-    type: mongoose.Schema.Types.Double,
+    type: Number,
   },
   serviceCharge: {
-    type: mongoose.Schema.Types.Double,
+    type: Number,
   },
   faulty: {
     type: String,
@@ -57,7 +57,7 @@ var InvoiceSchema = new Schema({
     default: false,
   },
   price: {
-    type: mongoose.Schema.Types.Double,
+    type: Number,
     required: [true, 'please enter a price']
   },
   quantity: {
@@ -79,7 +79,7 @@ var InvoiceSchema = new Schema({
     type: Date,
   },
   amountReleased:{
-    type: mongoose.Schema.Types.Double,
+    type: Number,
   }
 });
 
