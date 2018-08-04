@@ -13,6 +13,8 @@ module.exports = function (app) {
         return responses.successMsg(res, results);
     });
 
+    app.post('/login', User.login);
+
     app.post('/user', User.register);
 
     // star routes

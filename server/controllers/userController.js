@@ -1,5 +1,3 @@
-
-
 var mongoose = require('mongoose');
 var User = require('../models/userModel');
 User = mongoose.model('user');
@@ -52,4 +50,44 @@ module.exports.register = function (req, res) {
             };
             return responses.successMsg(res, results);
         });
+};
+
+module.exports.login = function (req, res) {
+
+    User.findOne({
+        username: req.body.username
+    }, function (err, user) {
+
+        if (err) {
+            console.log(err);
+            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        }
+
+        if (!user) {
+            return responses.errorMsg(res, 404, "Not Found", "user not found", null);
+        }
+
+        var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+
+        if (!passwordIsValid) {
+            errors = {
+                auth: false,
+                token: null,
+                "msg": null
+            };
+            return responses.errorMsg(res, 401, "Unauthorized", "incorrect password.", errors);
+        }
+
+        var token = jwt.sign({
+            id: user._id
+        }, config.secret, {
+            expiresIn: 86400 // expires in 24 hours
+        });
+
+        results = {
+            auth: true,
+            token: token
+        };
+        return responses.successMsg(res, results);
+    });
 };
