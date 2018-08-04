@@ -15,7 +15,7 @@ var Disputes = new Schema({
   },
   file: {
     type: String,
-  },  
+  },
   isSolved: {
     type: Boolean,
     default: false,
@@ -78,7 +78,7 @@ var InvoiceSchema = new Schema({
   acceptance_timestamp: {
     type: Date,
   },
-  amountReleased:{
+  amountReleased: {
     type: Number,
   }
 });
