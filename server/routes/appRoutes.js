@@ -1,6 +1,9 @@
 'use strict';
 module.exports = function (app) {
+    var VerifyToken = require('../helper/verifyToken');
     var responses = require('../helper/responses');
+
+    var User = require('../controllers/userController');
 
     var errors, results;
 
@@ -11,6 +14,12 @@ module.exports = function (app) {
         };
         return responses.successMsg(res, results);
     });
+
+    app.post('/login', User.login);
+
+    app.post('/user', User.register);
+
+    app.get('/user', VerifyToken, User.current_user);
 
     // star routes
     app.get('*', function (req, res) {
