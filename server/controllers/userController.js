@@ -91,3 +91,31 @@ module.exports.login = function (req, res) {
         return responses.successMsg(res, results);
     });
 };
+
+
+module.exports.current_user = function (req, res) {
+
+    if (!req.id || req.id.length !== 24) {
+        return responses.errorMsg(res, 400, "Bad Request", "incorrect user id.");
+    }
+
+    User.findById(req.id, {
+            password: 0
+        }, // projection
+        function (err, user) {
+
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            if (!user) {
+                return responses.errorMsg(res, 404, "Not Found", "user not found", null);
+            }
+
+            results = {
+                user: user
+            };
+            return responses.successMsg(res, results);
+        });
+};
