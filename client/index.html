@@ -1,4 +1,4 @@
-<!DOCTYPE <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -24,8 +24,7 @@
 </head>
 
 <body>
-
-    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
         <!-- Brand/logo -->
         <a class="navbar-brand" href="#">
             <img src="assets/logo.png" alt="logo" style="width:40px;">
@@ -50,6 +49,69 @@
             </ul>
         </div>
     </nav>
+
+    <div class="container nav-spacer"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+
+            </div>
+            <div class="col-md-6">
+                <div class="container spacer"></div>
+                <div class="login-form">
+                    <h1> Login Form </h1>
+                    <form action="/action_page.php">
+                        <div class="form-group">
+                            <label for="email">Email address:</label>
+                            <input type="email" class="form-control" id="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Password:</label>
+                            <input type="password" class="form-control" id="pwd">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" id="register" class="btn btn-primary">Regiser</button>
+                    </form>
+                </div>
+
+                <div class="register-form">
+                    <h1> Registration Form </h1>
+                    <form action="localhost:3000/user" method="POST">
+                        <div class="form-group">
+                            <label for="fname">First Name:</label>
+                            <input type="text" class="form-control" id="fname" name="fname">
+                        </div>
+                        <div class="form-group">
+                            <label for="lname">Last Name:</label>
+                            <input type="text" class="form-control" id="lname" name="lname">
+                        </div>
+                        <div class="form-group">
+                            <label for="type">Type:</label>
+                            <input type="text" class="form-control" id="type" name="type">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email address:</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Password:</label>
+                            <input type="password" class="form-control" id="pwd" name="pwd">
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">Mobile:</label>
+                            <input type="number" class="form-control" id="mobile" name="mobile">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" id="login" class="btn btn-primary">Login</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 
 </body>
 
