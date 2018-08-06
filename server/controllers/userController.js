@@ -171,3 +171,48 @@ module.exports.verify = function (req, res) {
             }
         });
 };
+
+module.exports.sendVerificationLink = function (req, res) {
+
+    User.findOne({
+        email: req.body.email
+    }, function (err, user) {
+
+        if (err) {
+            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        }
+
+        if (!user) {
+            return responses.errorMsg(res, 404, "Not Found", "user not found.", null);
+        }
+
+        if (user.isVerifiedEmail !== false) {
+            return responses.errorMsg(res, 208, "Already Reported", "already verified.", null);
+        } else {
+            var token = jwt.sign({
+                id: user._id
+            }, config.secret, {
+                expiresIn: 86400 // expires in 24 hours
+            });
+            
+            Verification.findOneAndUpdate({
+                    username: req.body.username
+                }, {
+                    key: token
+                },
+                function (err, verification) {
+                    if (err) {
+                        return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                    } else {
+                        user.password = undefined;
+
+                        var link = 'http://localhost:3000/verify/email/' + token;
+            
+                        Mail.verification_mail(req.body.email, link);
+            
+                        return responses.successMsg(res, null);
+                    }
+                });
+        }
+    });
+};

@@ -19,7 +19,7 @@ module.exports = function (app) {
 
     app.get('/verify/email/:token', VerifyToken, User.verify);
 
-    //app.post('/verify/email', User.sendVerificationLink);
+    app.post('/verify/email', User.sendVerificationLink);
 
     app.post('/user', User.register);
 
