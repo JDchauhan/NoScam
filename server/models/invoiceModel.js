@@ -64,13 +64,7 @@ var InvoiceSchema = new Schema({
     type: Number,
     default: 1
   },
-  cc: {
-    type: Number,
-  },
   dispute: Disputes,
-  cc: {
-    type: Number,
-  },
   generation_timestamp: {
     type: Date,
     default: Date.now
