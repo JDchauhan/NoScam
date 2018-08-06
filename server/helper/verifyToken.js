@@ -4,7 +4,7 @@ var config = require('../config');
 var responses = require('./responses');
 
 function verifyToken(req, res, next) {
-  var token = req.headers.authorization;
+  var token = req.headers.authorization || req.params.token;
   if (!token) {
     let errors = {
       auth: false

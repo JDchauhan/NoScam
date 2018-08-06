@@ -17,6 +17,10 @@ module.exports = function (app) {
 
     app.post('/login', User.login);
 
+    app.get('/verify/email/:token', VerifyToken, User.verify);
+
+    //app.post('/verify/email', User.sendVerificationLink);
+
     app.post('/user', User.register);
 
     app.get('/user', VerifyToken, User.current_user);
