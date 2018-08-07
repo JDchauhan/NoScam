@@ -57,16 +57,12 @@ module.exports.register = function (req, res) {
                     if (err) {
                         return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
                     } else {
-                        results = {
-                            "auth": true,
-                            "token": token
-                        };
-            
+                        
                         var link = 'http://localhost:3000/verify/email/' + token;
             
                         Mail.verification_mail(req.body.email, link);
             
-                        return responses.successMsg(res, results);            
+                        return responses.successMsg(res, null);            
                     }
                 });
 
@@ -76,7 +72,7 @@ module.exports.register = function (req, res) {
 module.exports.login = function (req, res) {
 
     User.findOne({
-        username: req.body.username
+        email: req.body.email
     }, function (err, user) {
 
         if (err) {
@@ -97,6 +93,15 @@ module.exports.login = function (req, res) {
                 "msg": null
             };
             return responses.errorMsg(res, 401, "Unauthorized", "incorrect password.", errors);
+        }
+
+        if(!user.isVerifiedEmail){
+            errors = {
+                auth: false,
+                token: null,
+                "msg": null
+            };
+            return responses.errorMsg(res, 401, "Unauthorized", "Verify your account to login.", errors);
         }
 
         var token = jwt.sign({
@@ -196,7 +201,7 @@ module.exports.sendVerificationLink = function (req, res) {
             });
             
             Verification.findOneAndUpdate({
-                    username: req.body.username
+                    email: req.body.email
                 }, {
                     key: token
                 },
