@@ -12,6 +12,7 @@ var config = require('../config');
 
 Mail = require('../helper/mail');
 var responses = require('../helper/responses');
+var AuthoriseUser = require('../helper/authoriseUser');
 
 module.exports.register = function (req, res) {
     var hashedPassword = bcrypt.hashSync(req.body.password, 8);
@@ -119,30 +120,14 @@ module.exports.login = function (req, res) {
 };
 
 module.exports.current_user = function (req, res) {
-
-    if (!req.id || req.id.length !== 24) {
-        return responses.errorMsg(res, 400, "Bad Request", "incorrect user id.");
-    }
-
-    User.findById(req.id, {
-            password: 0
-        }, // projection
-        function (err, user) {
-
-            if (err) {
-                console.log(err);
-                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
-            }
-
-            if (!user) {
-                return responses.errorMsg(res, 404, "Not Found", "user not found", null);
-            }
-
-            results = {
-                user: user
-            };
-            return responses.successMsg(res, results);
-        });
+    AuthoriseUser.getUser(req, res, function (user) {
+        user.password = undefined;
+        user.__v = undefined;
+        results = {
+            user: user
+        };
+        return responses.successMsg(res, results);
+    });
 };
 
 module.exports.verify = function (req, res) {
