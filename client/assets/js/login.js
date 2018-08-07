@@ -45,7 +45,7 @@ $(document).ready(function () {
             fname:  $('#fname').val(),
             lname:  $('#lname').val(),
             mname:  $('#mname').val(),
-            type:  $('#type').val(),
+            role:  $('#role').val(),
             mobile:  $('#mobile').val()
         },
         function(data, status, xhr){
