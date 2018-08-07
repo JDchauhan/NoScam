@@ -4,7 +4,8 @@ module.exports = function (app) {
     var responses = require('../helper/responses');
 
     var User = require('../controllers/userController');
-
+    var Product = require('../controllers/productController');
+    
     var errors, results;
 
     // Routes
@@ -15,6 +16,7 @@ module.exports = function (app) {
         return responses.successMsg(res, results);
     });
 
+    //user
     app.post('/login', User.login);
 
     app.get('/verify/email/:token', VerifyToken, User.verify);
@@ -24,6 +26,11 @@ module.exports = function (app) {
     app.post('/user', User.register);
 
     app.get('/user', VerifyToken, User.current_user);
+
+
+    //product
+    app.post('/product', VerifyToken, Product.addProduct);
+    
 
     // star routes
     app.get('*', function (req, res) {
