@@ -9,9 +9,9 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var config = require('../config');
 
-
 Mail = require('../helper/mail');
 var responses = require('../helper/responses');
+var AuthoriseUser = require('../helper/authoriseUser');
 
 module.exports.register = function (req, res) {
     var hashedPassword = bcrypt.hashSync(req.body.password, 8);
@@ -57,16 +57,12 @@ module.exports.register = function (req, res) {
                     if (err) {
                         return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
                     } else {
-                        results = {
-                            "auth": true,
-                            "token": token
-                        };
-            
+
                         var link = 'http://localhost:3000/verify/email/' + token;
-            
+
                         Mail.verification_mail(req.body.email, link);
-            
-                        return responses.successMsg(res, results);            
+
+                        return responses.successMsg(res, null);
                     }
                 });
 
@@ -76,7 +72,7 @@ module.exports.register = function (req, res) {
 module.exports.login = function (req, res) {
 
     User.findOne({
-        username: req.body.username
+        email: req.body.email
     }, function (err, user) {
 
         if (err) {
@@ -99,6 +95,15 @@ module.exports.login = function (req, res) {
             return responses.errorMsg(res, 401, "Unauthorized", "incorrect password.", errors);
         }
 
+        if (!user.isVerifiedEmail) {
+            errors = {
+                auth: false,
+                token: null,
+                "msg": null
+            };
+            return responses.errorMsg(res, 401, "Unauthorized", "Verify your account to login.", errors);
+        }
+
         var token = jwt.sign({
             id: user._id
         }, config.secret, {
@@ -114,30 +119,14 @@ module.exports.login = function (req, res) {
 };
 
 module.exports.current_user = function (req, res) {
-
-    if (!req.id || req.id.length !== 24) {
-        return responses.errorMsg(res, 400, "Bad Request", "incorrect user id.");
-    }
-
-    User.findById(req.id, {
-            password: 0
-        }, // projection
-        function (err, user) {
-
-            if (err) {
-                console.log(err);
-                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
-            }
-
-            if (!user) {
-                return responses.errorMsg(res, 404, "Not Found", "user not found", null);
-            }
-
-            results = {
-                user: user
-            };
-            return responses.successMsg(res, results);
-        });
+    AuthoriseUser.getUser(req, res, function (user) {
+        user.password = undefined;
+        user.__v = undefined;
+        results = {
+            user: user
+        };
+        return responses.successMsg(res, results);
+    });
 };
 
 module.exports.verify = function (req, res) {
@@ -146,30 +135,30 @@ module.exports.verify = function (req, res) {
     }
     Verification.findOneAndRemove({
         userID: req.id
-    },function (err, verified) {
-            if (err) {
-                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
-            }
-            if (!verified) {
-                return responses.errorMsg(res, 410, "Gone", "link has been expired.", null);
-            } else {
-                User.findOneAndUpdate({
-                    _id: req.id
-                }, {
-                    isVerifiedEmail: true
-                }, function (err, user) {
-                    if (err) {
-                        return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
-                    }
+    }, function (err, verified) {
+        if (err) {
+            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        }
+        if (!verified) {
+            return responses.errorMsg(res, 410, "Gone", "link has been expired.", null);
+        } else {
+            User.findOneAndUpdate({
+                _id: req.id
+            }, {
+                isVerifiedEmail: true
+            }, function (err, user) {
+                if (err) {
+                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                }
 
-                    if (!user) {
-                        return responses.errorMsg(res, 404, "Not Found", "user not found.", null);
-                    }
-                    user.email_verification = true;
-                    return res.redirect("http://localhost:80");
-                });
-            }
-        });
+                if (!user) {
+                    return responses.errorMsg(res, 404, "Not Found", "user not found.", null);
+                }
+                user.email_verification = true;
+                return res.redirect("http://localhost:80");
+            });
+        }
+    });
 };
 
 module.exports.sendVerificationLink = function (req, res) {
@@ -194,9 +183,9 @@ module.exports.sendVerificationLink = function (req, res) {
             }, config.secret, {
                 expiresIn: 86400 // expires in 24 hours
             });
-            
+
             Verification.findOneAndUpdate({
-                    username: req.body.username
+                    email: req.body.email
                 }, {
                     key: token
                 },
@@ -207,9 +196,9 @@ module.exports.sendVerificationLink = function (req, res) {
                         user.password = undefined;
 
                         var link = 'http://localhost:3000/verify/email/' + token;
-            
+
                         Mail.verification_mail(req.body.email, link);
-            
+
                         return responses.successMsg(res, null);
                     }
                 });
