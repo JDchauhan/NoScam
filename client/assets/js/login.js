@@ -37,4 +37,42 @@ $(document).ready(function () {
         });
     });
 
+    $("#register-btn").click(function(){
+        $.post("http://localhost:3000/user",
+        {
+            email:  $('#email').val(),
+            password: $('#password').val(),
+            fname:  $('#fname').val(),
+            lname:  $('#lname').val(),
+            mname:  $('#mname').val(),
+            type:  $('#type').val(),
+            mobile:  $('#mobile').val()
+        },
+        function(data, status, xhr){
+            console.log(data);
+            $(".register-form").hide();
+            $(".login-form").show();
+            
+            $('#login-err').append(
+                '<div class="alert alert-success alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Registration Successful! </strong> Verify your account to continue'     +
+                '</div>'
+            );
+            
+            //setCookie("token", data.results.token, 1);
+            //window.location.href = "pages/dashboard.html";
+        }).fail(function(xhr, status, error) {
+            var errMsg = JSON.parse(xhr.responseText).message;
+            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+            $('#registration-err').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                '</div>'
+            );
+            window.location.href = "#";    
+        });
+    });
+
 });

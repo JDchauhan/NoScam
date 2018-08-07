@@ -79,6 +79,7 @@
 
                 <div class="register-form">
                     <h1> Registration Form </h1>
+                    <div id="registration-err"></div>
                     <form>
                         <div class="form-group">
                             <label for="fname">First Name:</label>
@@ -89,22 +90,29 @@
                             <input type="text" class="form-control" id="lname" name="lname">
                         </div>
                         <div class="form-group">
+                            <label for="mname">Middle Name:</label>
+                            <input type="text" class="form-control" id="mname" name="mname">
+                        </div>
+                        <div class="form-group">
                             <label for="type">Type:</label>
-                            <input type="text" class="form-control" id="type" name="type">
+                            <select class="form-control" id="type" name="type">
+                                <option>Buyer</option>
+                                <option>Seller</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="email">Email address:</label>
                             <input type="email" class="form-control" id="email" name="email">
                         </div>
                         <div class="form-group">
-                            <label for="pwd">Password:</label>
-                            <input type="password" class="form-control" id="pwd" name="pwd">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password">
                         </div>
                         <div class="form-group">
                             <label for="mobile">Mobile:</label>
                             <input type="number" class="form-control" id="mobile" name="mobile">
                         </div>
-                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-primary" id="register-btn">Submit</button>
                         <button type="button" id="login" class="btn btn-primary">Login</button>
                     </form>
                 </div>
