@@ -1,37 +1,29 @@
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
 $(document).ready(function () {
     $(document).on('click', '', function(){ 
         $('.alert').hide(500);
    });
-
-    $(".register-form").hide();
-
-    $("#login").click(function () {
-        $(".register-form").hide();
-        $(".login-form").show();
-    });
-    $("#register").click(function () {
-        $(".login-form").hide();
-        $(".register-form").show();
-    });
-
-    $("#login-btn").click(function(){
-        $.post("http://localhost:3000/login",
-        {
-            email:  $('#login-email').val(),
-            password: $('#login-password').val()
-        },
-        function(data, status, xhr){
-            console.log("Data: " + data + "\nStatus: " + status);
-        }).fail(function(xhr, status, error) {
-            var errMsg = JSON.parse(xhr.responseText).message;
-            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-            $('#login-err').append(
-                '<div class="alert alert-danger alert-dismissible fade show">' +
-                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                    '<strong>Oops! </strong>' + errMsg +
-                '</div>'
-            );
-        });
-    });
 
 });
