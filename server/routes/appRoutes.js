@@ -29,8 +29,11 @@ module.exports = function (app) {
 
 
     //product
-    app.post('/product', VerifyToken, Product.addProduct);
+    app.get('/products', VerifyToken, Product.getProducts);
     
+    app.post('/products', VerifyToken, Product.addProduct);
+    
+
 
     // star routes
     app.get('*', function (req, res) {

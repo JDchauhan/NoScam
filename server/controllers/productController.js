@@ -5,6 +5,8 @@ Product = mongoose.model('product');
 var responses = require('../helper/responses');
 var AuthoriseUser = require('../helper/authoriseUser');
 
+var errors, results;
+
 module.exports.addProduct = function (req, res) {
     AuthoriseUser.getUser(req, res, function (user) {
         if (user.role !== "seller") {
@@ -33,6 +35,23 @@ module.exports.addProduct = function (req, res) {
             }
 
             return responses.successMsg(res, null);
+        });
+    });
+};
+
+module.exports.getProducts = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        
+        Product.find({}, function (err, products) {
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            results = {
+                products: products
+            }
+            return responses.successMsg(res, results);
         });
     });
 };
