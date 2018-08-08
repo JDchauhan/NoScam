@@ -39,20 +39,14 @@ function loadHome(role) {
                             '<a href=' + product.image + ' data-size="1600x1067">' +
                                 '<img alt="' + product.name + '" src=' + product.image + ' class="img-fluid">' +
                             '</a>' +
-                            '<div>' +
+                            '<figcaption class="figure-caption text-right">' +
                                 '<div>' + 
                                     product.name +               
                                 '</div>' +
+                                '<div>' + 
                                     product.price +
-                                '<div>' +        
-                                    product.cc +          
-                                '</div>' +
-                                '<div>' +      
-                                    product.description +                 
-                                '</div>' +
-                                '<div>' +                       
-                                '</div>' +                            
-                            '</div>' +
+                                '</div>' +        
+                            '</figcaption>' +
                         '</figure>'
                     );
                 });        
