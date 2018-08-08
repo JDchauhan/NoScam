@@ -34,28 +34,36 @@ function loadHome(role) {
                     if(!product.image){
                         product.image = "../assets/images/test.jpg";
                     }
+                    var description = "";
+                    if(product.description && product.description !== ""){
+                        description = '<div> Description: ' + product.description + '</div>'; 
+                    }
+
                     $('.dashboardContainer').append(
                         '<figure class="col-md-3">' +
-                            '<a href=' + product.image + ' data-size="1600x1067">' +
+                            '<a data-toggle="popover" data-img="' + product.image + '" title="' + product.name + '" data-placement="bottom" data-text="' +
+                                '<div>' + 
+                                    "Price: " + product.price +
+                                '</div>' +
+                                description +
+                            '">' +
                                 '<img alt="' + product.name + '" src=' + product.image + ' class="img-fluid">' +
                             '</a>' +
-                            '<div>' +
+                            '<figcaption class="figure-caption text-right">' +
                                 '<div>' + 
                                     product.name +               
                                 '</div>' +
+                                '<div>' + 
                                     product.price +
-                                '<div>' +        
-                                    product.cc +          
-                                '</div>' +
-                                '<div>' +      
-                                    product.description +                 
-                                '</div>' +
-                                '<div>' +                       
-                                '</div>' +                            
-                            '</div>' +
+                                '</div>' +        
+                            '</figcaption>' +
                         '</figure>'
                     );
-                });        
+                    $('[data-toggle="popover"]').popover({
+                        html: true,
+                        content: function(){return '<img src="'+$(this).data('img') + '" height="40px" width="40px"/>' +
+                        '<p>' + $(this).data('text') + '</p>';}});
+                    });        
             }).fail(function (xhr, status, error) {
             console.log(error);
         });
