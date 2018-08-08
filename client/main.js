@@ -24,6 +24,5 @@ function getCookie(cname) {
 $(document).ready(function () {
     $(document).on('click', '', function(){ 
         $('.alert').hide(500);
-   });
-
+    });
 });

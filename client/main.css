@@ -11,3 +11,8 @@
 .img-fluid {
     width: 100%;
 }
+
+.popover{
+    width: 100vw; 
+    top: 10% !important;
+}
