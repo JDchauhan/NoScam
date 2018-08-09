@@ -56,3 +56,19 @@ module.exports.getProducts = function (req, res) {
         });
     });
 };
+
+module.exports.getProductsBySeller = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        Product.find({seller: req.params.sellerId}, function (err, products) {
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            results = {
+                products: products
+            }
+            return responses.successMsg(res, results);
+        });
+    });
+};
