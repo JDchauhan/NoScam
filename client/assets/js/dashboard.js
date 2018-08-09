@@ -1,4 +1,4 @@
-var sellerID;
+var currentUserID;
 if (getCookie("token") === "") {
     window.location.href = "../";
 } else {
@@ -17,8 +17,8 @@ if (getCookie("token") === "") {
             lname = lname.charAt(0).toUpperCase() + lname.substr(1);
 
             $(".username").text(fname + " " + lname);
-            
-            sellerID = data.results.user._id;
+
+            currentUserID = data.results.user._id;
             loadHome(data.results.user.role);
 
         }).fail(function (xhr, status, error) {
@@ -105,8 +105,8 @@ function loadHome(role) {
             '</div>'
         );
 
-        if (sellerID) {
-            $.get("http://localhost:3000/products/seller/" + sellerID, {},
+        if (currentUserID) {
+            $.get("http://localhost:3000/products/seller/" + currentUserID, {},
                 function (data, status, xhr) {
                     console.log(data);
                     data.results.products.forEach(product => {
