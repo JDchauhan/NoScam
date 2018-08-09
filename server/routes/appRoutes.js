@@ -33,7 +33,7 @@ module.exports = function (app) {
     
     app.post('/products', VerifyToken, Product.addProduct);
     
-
+    app.get('/products/seller/:sellerId', VerifyToken, Product.getProductsBySeller);
 
     // star routes
     app.get('*', function (req, res) {

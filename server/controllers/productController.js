@@ -13,6 +13,7 @@ module.exports.addProduct = function (req, res) {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
         }
 
+        req.body.seller = user.id;
         Product.create(req.body, function (err, product) {
             if (err) {
 
@@ -43,6 +44,22 @@ module.exports.getProducts = function (req, res) {
     AuthoriseUser.getUser(req, res, function (user) {
         
         Product.find({}, function (err, products) {
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            results = {
+                products: products
+            }
+            return responses.successMsg(res, results);
+        });
+    });
+};
+
+module.exports.getProductsBySeller = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        Product.find({seller: req.params.sellerId}, function (err, products) {
             if (err) {
                 console.log(err);
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);

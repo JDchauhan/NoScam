@@ -33,6 +33,11 @@ var productSchema = new Schema({
     type: Boolean,
     default: true
   },
+  seller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    required: [true, "must need an seller"]
+  },
   isPackage: {
     type: Boolean,
     default: false
