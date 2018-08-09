@@ -13,6 +13,7 @@ module.exports.addProduct = function (req, res) {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
         }
 
+        req.body.seller = user.id;
         Product.create(req.body, function (err, product) {
             if (err) {
 
