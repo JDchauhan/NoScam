@@ -39,7 +39,7 @@ function loadHome(role) {
                         description = '<div> Description: ' + product.description + '</div>'; 
                     }
 
-                    $('.dashboardContainer').append(
+                    $('.buyerDashboardContainer').append(
                         '<figure class="col-md-3">' +
                             '<a data-toggle="popover" data-img="' + product.image + '" title="' + product.name + '" data-placement="bottom" data-text="' +
                                 '<div>' + 
@@ -70,7 +70,7 @@ function loadHome(role) {
         
 
     } else {
-        $('.dashboardContainer').append(
+        $('.sellerDashboardContainer').append(
             '<div class="product-form">' +
                 '<h1> Add Product </h1>' +
                 '<div id="product-add-err"></div>' +
