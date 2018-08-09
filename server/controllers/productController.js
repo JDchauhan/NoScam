@@ -68,6 +68,10 @@ module.exports.updateProduct = function (req, res) {
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
             }
 
+            if(!products){
+                return responses.errorMsg(res, 404, "Not Found", "product not found.", null);
+            }
+            
             return responses.successMsg(res, null);
         });
     });
