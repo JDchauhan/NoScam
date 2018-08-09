@@ -88,12 +88,49 @@ function loadHome(role) {
                         '<input type="text" class="form-control" id="description" name="description">' +
                     '</div>' +
                     '<div class="form-group">' +
+                        '<label for="url">Image url:</label>' +
+                        '<input type="text" class="form-control" id="url" name="url">' +
+                    '</div>' +
+                    '<div class="form-group">' +
                         '<label for="cc">CC:</label>' +
                         '<input type="text" class="form-control" id="cc" name="cc">' +
                     '</div>' +
-                    '<button type="button" class="btn btn-primary" id="register-btn">Submit</button>' +
+                    '<button type="button" class="btn btn-primary" id="product-add-btn">Submit</button>' +
                 '</form>' +
             '</div>'
         );
     }
 }
+
+$(document).ready(function () {
+    $(document).on('click', '#product-add-btn', function(){ 
+        $.post("http://localhost:3000/products",
+        {
+            name:  $('#pname').val(),
+            price: $('#price').val(),
+            description:  $('#description').val(),
+            cc:  $('#cc').val(),
+            url:  $('#url').val(),
+        },
+        function(data, status, xhr){
+            console.log(data);
+            
+            $('#product-add-err').append(
+                '<div class="alert alert-success alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Congratulations! </strong> Your product has been added successfully' +
+                '</div>'
+            );
+            
+        }).fail(function(xhr, status, error) {
+            var errMsg = JSON.parse(xhr.responseText).message;
+            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+            $('#product-add-err').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                '</div>'
+            );
+        });
+    }); 
+});
