@@ -70,6 +70,30 @@ function loadHome(role) {
         
 
     } else {
-
+        $('.dashboardContainer').append(
+            '<div class="product-form">' +
+                '<h1> Add Product </h1>' +
+                '<div id="product-add-err"></div>' +
+                '<form>' +
+                    '<div class="form-group">' +
+                        '<label for="pname">Product Name:</label>' +
+                        '<input type="text" class="form-control" id="pname" name="pname">' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                        '<label for="price">Unit Price:</label>' +
+                        '<input type="number" class="form-control" id="price" name="price">' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                        '<label for="description">Description:</label>' +
+                        '<input type="text" class="form-control" id="description" name="description">' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                        '<label for="cc">CC:</label>' +
+                        '<input type="text" class="form-control" id="cc" name="cc">' +
+                    '</div>' +
+                    '<button type="button" class="btn btn-primary" id="register-btn">Submit</button>' +
+                '</form>' +
+            '</div>'
+        );
     }
 }
