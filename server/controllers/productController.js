@@ -13,8 +13,14 @@ module.exports.addProduct = function (req, res) {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
         }
 
-        req.body.seller = user.id;
-        Product.create(req.body, function (err, product) {
+        Product.create({
+            seller: user.id,
+            name: req.body.name,
+            price: req.body.price,
+            description: req.body.description,
+            cc: req.body.cc,
+            image: req.body.image
+        }, function (err, product) {
             if (err) {
 
                 if (err.name && err.name == "ValidationError") {
@@ -40,9 +46,36 @@ module.exports.addProduct = function (req, res) {
     });
 };
 
+module.exports.updateProduct = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        if (user.role !== "seller") {
+            return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
+        }
+
+        Product.findByIdAndUpdate({
+            _id: req.body.productID,
+            seller: user.id
+        }, {
+            seller: user.id,
+            name: req.body.name,
+            price: req.body.price,
+            description: req.body.description,
+            cc: req.body.cc,
+            image: req.body.image
+        }, function (err, products) {
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            return responses.successMsg(res, null);
+        });
+    });
+};
+
 module.exports.getProducts = function (req, res) {
     AuthoriseUser.getUser(req, res, function (user) {
-        
+
         Product.find({}, function (err, products) {
             if (err) {
                 console.log(err);
@@ -59,7 +92,9 @@ module.exports.getProducts = function (req, res) {
 
 module.exports.getProductsBySeller = function (req, res) {
     AuthoriseUser.getUser(req, res, function (user) {
-        Product.find({seller: req.params.sellerId}, function (err, products) {
+        Product.find({
+            seller: req.params.sellerId
+        }, function (err, products) {
             if (err) {
                 console.log(err);
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
