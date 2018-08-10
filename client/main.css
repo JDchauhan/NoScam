@@ -14,5 +14,16 @@
 
 .popover{
     width: 100vw; 
-    top: 10% !important;
+}
+
+.listProducts {
+    height: 70vh;
+    overflow-y: scroll;
+}
+
+@media only screen and (max-width: 768px) {
+    .listProducts {
+        overflow: hidden;
+        height: inherit;
+    }
 }

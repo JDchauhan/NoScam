@@ -162,10 +162,12 @@ function loadHome(role) {
 
 $(document).ready(function () {
 
-    $('.addProduct').hide();
+    $('.addProduct').show();
     $('.updateProduct').hide();
 
     $(document).on('click', '#product-add-btn', function () {
+        window.location.href = "#";
+
         $.post("http://localhost:3000/products", {
                 name: $('#pname').val(),
                 price: $('#price').val(),
@@ -205,6 +207,8 @@ $(document).ready(function () {
             cc: $('#u_cc').val(),
             url: $('#u_url').val(),
         };
+
+        window.location.href = "#";
 
         $.ajax({
             url: "http://localhost:3000/products",
