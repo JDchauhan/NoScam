@@ -63,24 +63,60 @@
 
     <div class="container">
         <!-- for buyer-->
-        <div class="row buyerDashboardContainer">   
-                
+        <div class="row buyerDashboardContainer">
+
         </div>
 
         <!-- for seller-->
-        <div class="row">   
-            <div class="col-md-6 addProduct">   
-            
+        <div class="row">
+            <div class="col-md-6 addProduct">
+
             </div>
+
             <div class="col-md-6">
-                <h1>Your Products</h1>   
-                <div class="row listProducts">   
-            
+                <h1 class="seller"></h1>
+                <div class="row listProducts">
+
                 </div>
-            </div>    
+            </div>
+
+            <div class="col-md-6 updateProduct">
+                <div class="product-form">
+                    <h1> Update Product </h1>
+                    <div id="product-update-err"></div>
+                    <form>
+                        <div class="form-group">
+                            <label for="pname">Product ID:</label>
+                            <input type="text" class="form-control" id="u_pid" name="u_pid" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="u_pname">Product Name:</label>
+                            <input type="text" class="form-control" id="u_pname" name="u_pname">
+                        </div>
+                        <div class="form-group">
+                            <label for="u_price">Unit Price:</label>
+                            <input type="number" class="form-control" id="u_price" name="u_price">
+                        </div>
+                        <div class="form-group">
+                            <label for="u_description">Description:</label>
+                            <input type="text" class="form-control" id="u_description" name="u_description">
+                        </div>
+                        <div class="form-group">
+                            <label for="u_url">Image url:</label>
+                            <input type="text" class="form-control" id="u_url" name="u_url">
+                        </div>
+                        <div class="form-group">
+                            <label for="u_cc">CC:</label>
+                            <input type="text" class="form-control" id="u_cc" name="u_cc">
+                        </div>
+                        <button type="button" class="btn btn-primary" id="product-update-btn">Submit</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+    </div>
 
 </body>
 

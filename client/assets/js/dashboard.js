@@ -22,9 +22,65 @@ if (getCookie("token") === "") {
             loadHome(data.results.user.role);
 
         }).fail(function (xhr, status, error) {
-        window.location.href = "../";
-        setCookie("token", "", -1);
-    });
+            window.location.href = "../";
+            setCookie("token", "", -1);
+        });
+}
+
+
+function listMyProducts(currentUserID) {
+    if (currentUserID) {
+        $.get("http://localhost:3000/products/seller/" + currentUserID, {},
+            function (data, status, xhr) {
+                console.log(data);
+                $('.listProducts').empty();
+                data.results.products.forEach(product => {
+                    if (!product.image) {
+                        product.image = "../assets/images/test.jpg";
+                    }
+                    var description = "";
+                    if (product.description && product.description !== "") {
+                        description = '<div> Description: ' + product.description + '</div>';
+                    }
+
+                    $('.seller').text("Your Products");
+                    $('.listProducts').append(
+                        '<figure class="col-md-4">' +
+                        '<a data-toggle="popover" data-img="' + product.image + '" title="' + product.name + '" data-placement="bottom" data-text="' +
+                        '<div>' +
+                        "Price: " + product.price +
+                        '</div>' +
+                        description +
+                        '">' +
+                        '<img alt="' + product.name + '" src=' + product.image + ' class="img-fluid">' +
+                        '</a>' +
+                        '<figcaption class="figure-caption text-right">' +
+                        '<div>' +
+                        product.name +
+                        '</div>' +
+                        '<div>' +
+                        product.price +
+                        '</div>' +
+                        '</figcaption>' +
+                        '</figure>'
+                    );
+                    $('[data-toggle="popover"]').popover({
+                        html: true,
+                        content: function () {
+                            return '<img src="' + $(this).data('img') + '" height="40px" width="40px"/>' +
+                                '<p>' + $(this).data('text') + '</p>';
+                        }
+                    });
+                });
+            }).fail(function (xhr, status, error) {
+                $('.listProducts').empty();
+                $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
+            });
+    } else {
+
+        $('.listProducts').empty();
+        $('.listProducts').append('<div class="col-md-12">Unable to fetch at this moment</div>');
+    }
 }
 
 function loadHome(role) {
@@ -70,8 +126,8 @@ function loadHome(role) {
                     });
                 });
             }).fail(function (xhr, status, error) {
-            console.log(error);
-        });
+                console.log(error);
+            });
 
 
     } else {
@@ -105,66 +161,19 @@ function loadHome(role) {
             '</div>'
         );
 
-        if (currentUserID) {
-            $.get("http://localhost:3000/products/seller/" + currentUserID, {},
-                function (data, status, xhr) {
-                    console.log(data);
-                    data.results.products.forEach(product => {
-                        if (!product.image) {
-                            product.image = "../assets/images/test.jpg";
-                        }
-                        var description = "";
-                        if (product.description && product.description !== "") {
-                            description = '<div> Description: ' + product.description + '</div>';
-                        }
-
-                        $('.listProducts').append(
-                            '<figure class="col-md-4">' +
-                            '<a data-toggle="popover" data-img="' + product.image + '" title="' + product.name + '" data-placement="bottom" data-text="' +
-                            '<div>' +
-                            "Price: " + product.price +
-                            '</div>' +
-                            description +
-                            '">' +
-                            '<img alt="' + product.name + '" src=' + product.image + ' class="img-fluid">' +
-                            '</a>' +
-                            '<figcaption class="figure-caption text-right">' +
-                            '<div>' +
-                            product.name +
-                            '</div>' +
-                            '<div>' +
-                            product.price +
-                            '</div>' +
-                            '</figcaption>' +
-                            '</figure>'
-                        );
-                        $('[data-toggle="popover"]').popover({
-                            html: true,
-                            content: function () {
-                                return '<img src="' + $(this).data('img') + '" height="40px" width="40px"/>' +
-                                    '<p>' + $(this).data('text') + '</p>';
-                            }
-                        });
-                    });
-                }).fail(function (xhr, status, error) {
-                console.log(error);
-            });
-        }else {
-            $('.listProducts').empty();
-            $('.listProducts').append('<div class="col-md-12">Unable to fetch at this moment</div>');
-        }
+        listMyProducts(currentUserID);
     }
 }
 
 $(document).ready(function () {
     $(document).on('click', '#product-add-btn', function () {
         $.post("http://localhost:3000/products", {
-                name: $('#pname').val(),
-                price: $('#price').val(),
-                description: $('#description').val(),
-                cc: $('#cc').val(),
-                url: $('#url').val(),
-            },
+            name: $('#pname').val(),
+            price: $('#price').val(),
+            description: $('#description').val(),
+            cc: $('#cc').val(),
+            url: $('#url').val(),
+        },
             function (data, status, xhr) {
                 console.log(data);
 
@@ -174,16 +183,48 @@ $(document).ready(function () {
                     '<strong>Congratulations! </strong> Your product has been added successfully' +
                     '</div>'
                 );
+                listMyProducts(currentUserID);
 
             }).fail(function (xhr, status, error) {
-            var errMsg = JSON.parse(xhr.responseText).message;
-            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-            $('#product-add-err').append(
-                '<div class="alert alert-danger alert-dismissible fade show">' +
-                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                '<strong>Oops! </strong>' + errMsg +
-                '</div>'
-            );
-        });
+                var errMsg = JSON.parse(xhr.responseText).message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                $('#product-add-err').append(
+                    '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                    '</div>'
+                );
+            });
+    });
+
+    $(document).on('click', '#product-update-btn', function () {
+        $.put("http://localhost:3000/products", {
+            productID: $('#u_pid').val(),
+            name: $('#u_pname').val(),
+            price: $('#u_price').val(),
+            description: $('#u_description').val(),
+            cc: $('#u_cc').val(),
+            url: $('#u_url').val(),
+        },
+            function (data, status, xhr) {
+                console.log(data);
+
+                $('#product-update-err').append(
+                    '<div class="alert alert-success alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Congratulations! </strong> Your product has been added successfully' +
+                    '</div>'
+                );
+
+            }).fail(function (xhr, status, error) {
+                var errMsg = JSON.parse(xhr.responseText).message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                $('#product-update-err').append(
+                    '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                    '</div>'
+                );
+            });
     });
 });
