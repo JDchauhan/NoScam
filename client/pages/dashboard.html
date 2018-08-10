@@ -70,14 +70,34 @@
         <!-- for seller-->
         <div class="row">
             <div class="col-md-6 addProduct">
-
-            </div>
-
-            <div class="col-md-6">
-                <h1 class="seller"></h1>
-                <div class="row listProducts">
-
+                <div class="product-form">
+                    <h1> Add Product </h1>
+                    <div id="product-add-err"></div>
+                    <form>
+                        <div class="form-group">
+                            <label for="pname">Product Name:</label>
+                            <input type="text" class="form-control" id="pname" name="pname">
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Unit Price:</label>
+                            <input type="number" class="form-control" id="price" name="price">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <input type="text" class="form-control" id="description" name="description">
+                        </div>
+                        <div class="form-group">
+                            <label for="url">Image url:</label>
+                            <input type="text" class="form-control" id="url" name="url">
+                        </div>
+                        <div class="form-group">
+                            <label for="cc">CC:</label>
+                            <input type="text" class="form-control" id="cc" name="cc">
+                        </div>
+                        <button type="button" class="btn btn-primary" id="product-add-btn">Submit</button>
+                    </form>
                 </div>
+
             </div>
 
             <div class="col-md-6 updateProduct">
@@ -110,7 +130,15 @@
                             <input type="text" class="form-control" id="u_cc" name="u_cc">
                         </div>
                         <button type="button" class="btn btn-primary" id="product-update-btn">Submit</button>
+                        <button type="button" class="btn btn-primary" id="btn_add_product_form">Add Product</button>
                     </form>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h1 class="seller"></h1>
+                <div class="row listProducts">
+
                 </div>
             </div>
 

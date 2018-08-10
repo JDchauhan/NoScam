@@ -22,11 +22,21 @@ if (getCookie("token") === "") {
             loadHome(data.results.user.role);
 
         }).fail(function (xhr, status, error) {
-            window.location.href = "../";
-            setCookie("token", "", -1);
-        });
+        window.location.href = "../";
+        setCookie("token", "", -1);
+    });
 }
 
+function editProduct(id, name, price, description, image, cc) {
+    $('#u_pid').val(id);
+    $('#u_pname').val(name);
+    $('#u_price').val(price);
+    $('#u_description').val(description);
+    $('#u_image').val(image);
+    $('#u_cc').val(cc);
+    $('.addProduct').hide();
+    $('.updateProduct').show();
+}
 
 function listMyProducts(currentUserID) {
     if (currentUserID) {
@@ -46,7 +56,12 @@ function listMyProducts(currentUserID) {
                     $('.seller').text("Your Products");
                     $('.listProducts').append(
                         '<figure class="col-md-4">' +
-                        '<a data-toggle="popover" data-img="' + product.image + '" title="' + product.name + '" data-placement="bottom" data-text="' +
+                        '<a data-toggle="popover" data-img="' + product.image + '" title="' + product.name + '"' +
+
+                        'data-id="' + product._id + '"' + 'data-name="' + product.name + '"' + 'data-price="' + product.price + '"' +
+                        'data-cc="' + product.cc + '"' + 'data-description="' + product.description + '"' +
+
+                        'data-placement="bottom" data-text="' +
                         '<div>' +
                         "Price: " + product.price +
                         '</div>' +
@@ -68,14 +83,22 @@ function listMyProducts(currentUserID) {
                         html: true,
                         content: function () {
                             return '<img src="' + $(this).data('img') + '" height="40px" width="40px"/>' +
-                                '<p>' + $(this).data('text') + '</p>';
+                                '<div>' + $(this).data('text') + '</div>' +
+
+                                '<button class="btn btn-success" onclick=editProduct("' + $(this).data('id') + '","' +
+                                $(this).data('name') + '",' + $(this).data('price') + ',"' +
+                                $(this).data('description') + '","' + $(this).data('image') + '",' +
+                                $(this).data('cc') + ')> Edit </button>';
                         }
                     });
+
+                    $('#btn_update_form').addClass("btn-success");
+
                 });
             }).fail(function (xhr, status, error) {
-                $('.listProducts').empty();
-                $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
-            });
+            $('.listProducts').empty();
+            $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
+        });
     } else {
 
         $('.listProducts').empty();
@@ -126,54 +149,30 @@ function loadHome(role) {
                     });
                 });
             }).fail(function (xhr, status, error) {
-                console.log(error);
-            });
+            console.log(error);
+        });
 
 
     } else {
-        $('.addProduct').append(
-            '<div class="product-form">' +
-            '<h1> Add Product </h1>' +
-            '<div id="product-add-err"></div>' +
-            '<form>' +
-            '<div class="form-group">' +
-            '<label for="pname">Product Name:</label>' +
-            '<input type="text" class="form-control" id="pname" name="pname">' +
-            '</div>' +
-            '<div class="form-group">' +
-            '<label for="price">Unit Price:</label>' +
-            '<input type="number" class="form-control" id="price" name="price">' +
-            '</div>' +
-            '<div class="form-group">' +
-            '<label for="description">Description:</label>' +
-            '<input type="text" class="form-control" id="description" name="description">' +
-            '</div>' +
-            '<div class="form-group">' +
-            '<label for="url">Image url:</label>' +
-            '<input type="text" class="form-control" id="url" name="url">' +
-            '</div>' +
-            '<div class="form-group">' +
-            '<label for="cc">CC:</label>' +
-            '<input type="text" class="form-control" id="cc" name="cc">' +
-            '</div>' +
-            '<button type="button" class="btn btn-primary" id="product-add-btn">Submit</button>' +
-            '</form>' +
-            '</div>'
-        );
+        $('.addProduct').show();
 
         listMyProducts(currentUserID);
     }
 }
 
 $(document).ready(function () {
+
+    $('.addProduct').hide();
+    $('.updateProduct').hide();
+
     $(document).on('click', '#product-add-btn', function () {
         $.post("http://localhost:3000/products", {
-            name: $('#pname').val(),
-            price: $('#price').val(),
-            description: $('#description').val(),
-            cc: $('#cc').val(),
-            url: $('#url').val(),
-        },
+                name: $('#pname').val(),
+                price: $('#price').val(),
+                description: $('#description').val(),
+                cc: $('#cc').val(),
+                url: $('#url').val(),
+            },
             function (data, status, xhr) {
                 console.log(data);
 
@@ -186,37 +185,46 @@ $(document).ready(function () {
                 listMyProducts(currentUserID);
 
             }).fail(function (xhr, status, error) {
-                var errMsg = JSON.parse(xhr.responseText).message;
-                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-                $('#product-add-err').append(
-                    '<div class="alert alert-danger alert-dismissible fade show">' +
-                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                    '<strong>Oops! </strong>' + errMsg +
-                    '</div>'
-                );
-            });
+            var errMsg = JSON.parse(xhr.responseText).message;
+            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+            $('#product-add-err').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong>' + errMsg +
+                '</div>'
+            );
+        });
     });
 
     $(document).on('click', '#product-update-btn', function () {
-        $.put("http://localhost:3000/products", {
+        var data = {
             productID: $('#u_pid').val(),
             name: $('#u_pname').val(),
             price: $('#u_price').val(),
             description: $('#u_description').val(),
             cc: $('#u_cc').val(),
             url: $('#u_url').val(),
-        },
-            function (data, status, xhr) {
-                console.log(data);
+        };
 
-                $('#product-update-err').append(
+        $.ajax({
+            url: "http://localhost:3000/products",
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (result) {
+                $('.updateProduct').hide();
+                $('.addProduct').show();
+
+                $('#product-add-err').append(
                     '<div class="alert alert-success alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                    '<strong>Congratulations! </strong> Your product has been added successfully' +
+                    '<strong>Congratulations! </strong> Your product has been updated successfully' +
                     '</div>'
                 );
 
-            }).fail(function (xhr, status, error) {
+                listMyProducts(currentUserID);
+            },
+            error: function (xhr, textStatus, errorThrown) {
                 var errMsg = JSON.parse(xhr.responseText).message;
                 errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
                 $('#product-update-err').append(
@@ -225,6 +233,45 @@ $(document).ready(function () {
                     '<strong>Oops! </strong>' + errMsg +
                     '</div>'
                 );
-            });
+            }
+        });
+
+        // $.put("http://localhost:3000/products", ,
+        //     function (data, status, xhr) {
+        //         console.log(data);
+
+        //         $('#product-update-err').append(
+        //             '<div class="alert alert-success alert-dismissible fade show">' +
+        //             '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+        //             '<strong>Congratulations! </strong> Your product has been added successfully' +
+        //             '</div>'
+        //         );
+        //         listMyProducts(currentUserID);
+
+        //     }).fail(function (xhr, status, error) {
+        //     var errMsg = JSON.parse(xhr.responseText).message;
+        //     errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+        //     $('#product-update-err').append(
+        //         '<div class="alert alert-danger alert-dismissible fade show">' +
+        //         '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+        //         '<strong>Oops! </strong>' + errMsg +
+        //         '</div>'
+        //     );
+        // });
     });
+
+    $(document).on('click', '#btn_add_product_form', function () {
+        $('.addProduct').show();
+        $('.updateProduct').hide();
+    });
+
+    $('body').on('click', function (e) {
+        $('[data-toggle=popover]').each(function () {
+            // hide any open popovers when the anywhere else in the body is clicked
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                $(this).popover('hide');
+            }
+        });
+    });
+
 });
