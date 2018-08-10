@@ -52,7 +52,7 @@ module.exports.updateProduct = function (req, res) {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
         }
 
-        Product.findByIdAndUpdate({
+        Product.findOneAndUpdate({
             _id: req.body.productID,
             seller: user.id
         }, {
@@ -90,6 +90,30 @@ module.exports.getProducts = function (req, res) {
                 products: products
             }
             return responses.successMsg(res, results);
+        });
+    });
+};
+
+module.exports.deleteProduct = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        if (user.role !== "seller") {
+            return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
+        }
+        
+        Product.findOneAndRemove({
+            _id: req.body.productID,
+            seller: user.id
+        }, function (err, products) {
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            if(!products){
+                return responses.errorMsg(res, 404, "Not Found", "product not found.", null);
+            }
+            
+            return responses.successMsg(res, null);
         });
     });
 };

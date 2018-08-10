@@ -35,6 +35,8 @@ module.exports = function (app) {
 
     app.put('/products', VerifyToken, Product.updateProduct);
 
+    app.delete('/products', VerifyToken, Product.deleteProduct);
+
     app.get('/products/seller/:sellerId', VerifyToken, Product.getProductsBySeller);
 
     // star routes
