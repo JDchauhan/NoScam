@@ -5,6 +5,7 @@ module.exports = function (app) {
 
     var User = require('../controllers/userController');
     var Product = require('../controllers/productController');
+    var Invoice = require('../controllers/invoiceController');
     
     var errors, results;
 
@@ -35,7 +36,12 @@ module.exports = function (app) {
 
     app.put('/products', VerifyToken, Product.updateProduct);
 
+    app.delete('/products', VerifyToken, Product.deleteProduct);
+
     app.get('/products/seller/:sellerId', VerifyToken, Product.getProductsBySeller);
+
+    //Cart
+    app.put('/cart', VerifyToken, Invoice.createInvoice);
 
     // star routes
     app.get('*', function (req, res) {
