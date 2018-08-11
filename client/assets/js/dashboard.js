@@ -149,6 +149,9 @@ function listMyProducts(currentUserID) {
 
 function loadHome(role) {
     if (role === "buyer") {
+        $('.addProduct').hide();
+        $('.listProducts').hide();
+
         $.get("http://localhost:3000/products", {},
             function (data, status, xhr) {
                 console.log(data);
