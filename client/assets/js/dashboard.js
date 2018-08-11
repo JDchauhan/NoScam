@@ -22,9 +22,9 @@ if (getCookie("token") === "") {
             loadHome(data.results.user.role);
 
         }).fail(function (xhr, status, error) {
-        window.location.href = "../";
-        setCookie("token", "", -1);
-    });
+            window.location.href = "../";
+            setCookie("token", "", -1);
+        });
 }
 
 function editProduct(id, name, price, description, image, cc) {
@@ -36,6 +36,45 @@ function editProduct(id, name, price, description, image, cc) {
     $('#u_cc').val(cc);
     $('.addProduct').hide();
     $('.updateProduct').show();
+}
+
+function deleteProduct(id) {
+    data = {
+        productID: id
+    };
+
+    $.ajax({
+        url: "http://localhost:3000/products",
+        type: 'DELETE',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (result) {
+            $('.updateProduct').hide();
+            $('.addProduct').show();
+
+            $('#product-add-err').append(
+                '<div class="alert alert-success alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Congratulations! </strong> Your product has been successfully removed' +
+                '</div>'
+            );
+
+            listMyProducts(currentUserID);
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            var errMsg = JSON.parse(xhr.responseText).message;
+            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+            $('.updateProduct').hide();
+            $('.addProduct').show();
+
+            $('#product-add-err').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong>' + errMsg +
+                '</div>'
+            );
+        }
+    });
 }
 
 function listMyProducts(currentUserID) {
@@ -85,10 +124,12 @@ function listMyProducts(currentUserID) {
                             return '<img src="' + $(this).data('img') + '" height="40px" width="40px"/>' +
                                 '<div>' + $(this).data('text') + '</div>' +
 
-                                '<button class="btn btn-success" onclick=editProduct("' + $(this).data('id') + '","' +
+                                '<button class="btn btn-success edit_btn" onclick=editProduct("' + $(this).data('id') + '","' +
                                 $(this).data('name') + '",' + $(this).data('price') + ',"' +
                                 $(this).data('description') + '","' + $(this).data('image') + '",' +
-                                $(this).data('cc') + ')> Edit </button>';
+                                $(this).data('cc') + ')> Edit </button>' +
+
+                                '<button class="btn btn-danger" onclick=deleteProduct("' + $(this).data('id') + '")> Delete </button>';
                         }
                     });
 
@@ -96,9 +137,9 @@ function listMyProducts(currentUserID) {
 
                 });
             }).fail(function (xhr, status, error) {
-            $('.listProducts').empty();
-            $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
-        });
+                $('.listProducts').empty();
+                $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
+            });
     } else {
 
         $('.listProducts').empty();
@@ -149,8 +190,8 @@ function loadHome(role) {
                     });
                 });
             }).fail(function (xhr, status, error) {
-            console.log(error);
-        });
+                console.log(error);
+            });
 
 
     } else {
@@ -169,12 +210,12 @@ $(document).ready(function () {
         window.location.href = "#";
 
         $.post("http://localhost:3000/products", {
-                name: $('#pname').val(),
-                price: $('#price').val(),
-                description: $('#description').val(),
-                cc: $('#cc').val(),
-                url: $('#url').val(),
-            },
+            name: $('#pname').val(),
+            price: $('#price').val(),
+            description: $('#description').val(),
+            cc: $('#cc').val(),
+            url: $('#url').val(),
+        },
             function (data, status, xhr) {
                 console.log(data);
 
@@ -187,15 +228,15 @@ $(document).ready(function () {
                 listMyProducts(currentUserID);
 
             }).fail(function (xhr, status, error) {
-            var errMsg = JSON.parse(xhr.responseText).message;
-            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-            $('#product-add-err').append(
-                '<div class="alert alert-danger alert-dismissible fade show">' +
-                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                '<strong>Oops! </strong>' + errMsg +
-                '</div>'
-            );
-        });
+                var errMsg = JSON.parse(xhr.responseText).message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                $('#product-add-err').append(
+                    '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                    '</div>'
+                );
+            });
     });
 
     $(document).on('click', '#product-update-btn', function () {
@@ -240,28 +281,6 @@ $(document).ready(function () {
             }
         });
 
-        // $.put("http://localhost:3000/products", ,
-        //     function (data, status, xhr) {
-        //         console.log(data);
-
-        //         $('#product-update-err').append(
-        //             '<div class="alert alert-success alert-dismissible fade show">' +
-        //             '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-        //             '<strong>Congratulations! </strong> Your product has been added successfully' +
-        //             '</div>'
-        //         );
-        //         listMyProducts(currentUserID);
-
-        //     }).fail(function (xhr, status, error) {
-        //     var errMsg = JSON.parse(xhr.responseText).message;
-        //     errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-        //     $('#product-update-err').append(
-        //         '<div class="alert alert-danger alert-dismissible fade show">' +
-        //         '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-        //         '<strong>Oops! </strong>' + errMsg +
-        //         '</div>'
-        //     );
-        // });
     });
 
     $(document).on('click', '#btn_add_product_form', function () {
@@ -272,7 +291,8 @@ $(document).ready(function () {
     $('body').on('click', function (e) {
         $('[data-toggle=popover]').each(function () {
             // hide any open popovers when the anywhere else in the body is clicked
-            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0) {
+                //$('.popover').has(e.target) === 1 when clicked in popover
                 $(this).popover('hide');
             }
         });
