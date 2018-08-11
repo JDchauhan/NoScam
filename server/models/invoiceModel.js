@@ -44,9 +44,17 @@ var Disputes = new Schema({
 });
 
 var InvoiceSchema = new Schema({
+  isOrderPlaced: {
+    type: Boolean,
+    default: false
+  },
   seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
+  },
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'product'
   },
   buyer: {
     type: mongoose.Schema.Types.ObjectId,
@@ -62,7 +70,8 @@ var InvoiceSchema = new Schema({
   },
   quantity: {
     type: Number,
-    default: 1
+    default: 1,
+    required: [true, 'please enter a quantity']
   },
   dispute: Disputes,
   generation_timestamp: {

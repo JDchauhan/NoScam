@@ -68,10 +68,10 @@ module.exports.updateProduct = function (req, res) {
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
             }
 
-            if(!products){
+            if (!products) {
                 return responses.errorMsg(res, 404, "Not Found", "product not found.", null);
             }
-            
+
             return responses.successMsg(res, null);
         });
     });
@@ -99,7 +99,7 @@ module.exports.deleteProduct = function (req, res) {
         if (user.role !== "seller") {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
         }
-        
+
         Product.findOneAndRemove({
             _id: req.body.productID,
             seller: user.id
@@ -109,10 +109,10 @@ module.exports.deleteProduct = function (req, res) {
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
             }
 
-            if(!products){
+            if (!products) {
                 return responses.errorMsg(res, 404, "Not Found", "product not found.", null);
             }
-            
+
             return responses.successMsg(res, null);
         });
     });
