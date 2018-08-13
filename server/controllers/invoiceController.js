@@ -58,3 +58,33 @@ module.exports.createInvoice = function (req, res) {
         });
     });
 };
+
+module.exports.getCart = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        if (user.role !== "buyer") {
+            return responses.errorMsg(res, 401, "Unauthorized", "user is not a buyer.", null);
+        }
+
+        Invoice.find({buyer: user._id}, function (err, invoices) {
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+        }).populate("product", "-__v").exec(function(err, products){
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            if(!products){
+                return responses.errorMsg(res, 404, "Not Found", "nothing in cart.", null);
+            }
+
+            results = {
+                products: products
+            };
+            return responses.successMsg(res, results);     
+        });
+    });
+};

@@ -130,7 +130,7 @@ module.exports.getProductsBySeller = function (req, res) {
 
             results = {
                 products: products
-            }
+            };
             return responses.successMsg(res, results);
         });
     });
