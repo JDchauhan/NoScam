@@ -51,14 +51,13 @@
 }
 
 .product-removal {
-	float: left;
+	float: right;
 	width: 9%;
 }
 
 .product-line-price {
 	float: left;
 	width: 12%;
-	text-align: right;
 }
 
 /* This is used as the traditional .clearfix class */
@@ -100,19 +99,7 @@
 .product .product-price:before,
 .product .product-line-price:before,
 .totals-value:before {
-	content: '$';
-}
-
-/* Body/Header stuff */
-
-body {
-	padding: 0px 30px 30px 20px;
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: 100;
-}
-
-h1 {
-	font-weight: 100;
+	content: '₹ ';
 }
 
 label {
@@ -133,6 +120,7 @@ label {
 	margin-bottom: 20px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid #eee;
+	color: #4D5061;;
 }
 
 .product .product-image {
@@ -145,7 +133,7 @@ label {
 
 .product .product-details .product-title {
 	margin-right: 20px;
-	font-family: "HelveticaNeue-Medium", "Helvetica Neue Medium";
+	font-weight: bold;
 }
 
 .product .product-details .product-description {
@@ -155,6 +143,8 @@ label {
 
 .product .product-quantity input {
 	width: 40px;
+	color: #4D5061;
+	height: 25px;
 }
 
 .product .remove-product {
@@ -252,7 +242,6 @@ label {
 		width: auto;
 	}
 	.product-line-price {
-		float: right;
 		width: 70px;
 	}
 }
