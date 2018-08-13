@@ -32,6 +32,14 @@ $(function () {
         function (data, status, xhr) {
             console.log(data);
 
+            let tax = Math.round((0.05 * data.results.total) * 100) / 100;
+            let charge = Math.round((0.05 * data.results.total) * 100) / 100;
+            let total = data.results.total + tax + charge;
+            $('#cart-subtotal').text(data.results.total);
+            $('#cart-tax').text(tax);
+            $('#cart-service-charge').text(charge);
+            $('#cart-total').text(total);
+
             data.results.invoices.forEach(invoice => {
                 if (!invoice.product.image) {
                     invoice.product.image = "../assets/images/test.jpg";
