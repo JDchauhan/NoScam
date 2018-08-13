@@ -78,8 +78,13 @@ module.exports.getCart = function (req, res) {
                     return responses.errorMsg(res, 404, "Not Found", "nothing in cart.", null);
                 }
 
+                let bill = 0;
+                invoices.forEach(invoice => {
+                    bill += invoice.price;
+                });
                 results = {
-                    invoices: invoices
+                    invoices: invoices,
+                    total: bill
                 };
                 return responses.successMsg(res, results);
             });
