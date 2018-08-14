@@ -49,6 +49,8 @@ module.exports = function (app) {
     
     app.delete('/cart', VerifyToken, Invoice.deleteInvoice);
 
+    app.put('/cart/purchase', VerifyToken, Invoice.purchase);
+
     // star routes
     app.get('*', function (req, res) {
         return responses.errorMsg(res, 404, "Not Found", "path not found.", null);

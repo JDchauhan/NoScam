@@ -98,7 +98,7 @@ module.exports.updateCart = function (req, res) {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a buyer.", null);
         }
 
-        Product.findById(req.body.productID, function(err, product){
+        Product.findById(req.body.productID, function (err, product) {
             if (err) {
                 console.log(err);
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
@@ -119,11 +119,11 @@ module.exports.updateCart = function (req, res) {
                     console.log(err);
                     return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
                 }
-    
+
                 if (!invoice) {
                     return responses.errorMsg(res, 404, "Not Found", "order not found.", null);
                 }
-    
+
                 return responses.successMsg(res, null);
             });
         });
@@ -137,16 +137,43 @@ module.exports.deleteInvoice = function (req, res) {
         }
 
         Invoice.findByIdAndRemove(req.body.invoiceID, function (err, invoices) {
-                if (err) {
-                    console.log(err);
-                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
-                }
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
 
-                if (!invoices) {
-                    return responses.errorMsg(res, 404, "Not Found", "invoice not found.", null);
-                }
+            if (!invoices) {
+                return responses.errorMsg(res, 404, "Not Found", "invoice not found.", null);
+            }
 
-                return responses.successMsg(res, null);
-            });
+            return responses.successMsg(res, null);
+        });
+    });
+};
+
+module.exports.purchase = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        if (user.role !== "buyer") {
+            return responses.errorMsg(res, 401, "Unauthorized", "user is not a buyer.", null);
+        }
+
+        Invoice.updateMany({
+            _id: {
+                $in: req.body.invoices
+            }
+        }, {
+            isOrderPlaced: true
+        }, function (err, invoice) {
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            if (!invoice) {
+                return responses.errorMsg(res, 404, "Not Found", "order not found.", null);
+            }
+
+            return responses.successMsg(res, null);
+        });
     });
 };
