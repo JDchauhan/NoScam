@@ -90,3 +90,41 @@ module.exports.getCart = function (req, res) {
             });
     });
 };
+
+module.exports.updateCart = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        if (user.role !== "buyer") {
+            return responses.errorMsg(res, 401, "Unauthorized", "user is not a buyer.", null);
+        }
+
+        Product.findById(req.body.productID, function(err, product){
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            if (!product) {
+                return responses.errorMsg(res, 404, "Not Found", "product not found.", null);
+            }
+
+            Invoice.findOneAndUpdate({
+                _id: req.body.invoiceID,
+                buyer: user.id
+            }, {
+                quantity: req.body.quantity,
+                price: product.price * req.body.quantity
+            }, function (err, invoice) {
+                if (err) {
+                    console.log(err);
+                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                }
+    
+                if (!invoice) {
+                    return responses.errorMsg(res, 404, "Not Found", "order not found.", null);
+                }
+    
+                return responses.successMsg(res, null);
+            });
+        });
+    });
+};
