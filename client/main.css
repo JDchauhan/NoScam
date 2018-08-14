@@ -187,21 +187,6 @@ label {
 	font-family: "HelveticaNeue-Medium", "Helvetica Neue Medium";
 }
 
-.checkout {
-	float: right;
-	border: 0;
-	margin-top: 20px;
-	padding: 6px 25px;
-	background-color: #6b6;
-	color: #fff;
-	font-size: 25px;
-	border-radius: 3px;
-}
-
-.checkout:hover {
-	background-color: #494;
-}
-
 /* Make adjustments for tablet */
 
 @media screen and (max-width: 650px) {
