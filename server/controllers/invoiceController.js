@@ -128,3 +128,24 @@ module.exports.updateCart = function (req, res) {
         });
     });
 };
+
+module.exports.deleteInvoice = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        if (user.role !== "buyer") {
+            return responses.errorMsg(res, 401, "Unauthorized", "user is not a buyer.", null);
+        }
+
+        Invoice.findByIdAndRemove(req.body.invoiceID, function (err, invoices) {
+                if (err) {
+                    console.log(err);
+                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                }
+
+                if (!invoices) {
+                    return responses.errorMsg(res, 404, "Not Found", "invoice not found.", null);
+                }
+
+                return responses.successMsg(res, null);
+            });
+    });
+};
