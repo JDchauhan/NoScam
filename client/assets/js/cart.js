@@ -1,4 +1,4 @@
-var currentUserID, currentUserRole, changeQuantity;
+var currentUserID, currentUserRole, changeQuantity, deleteProduct;
 
 $(function () {
     if (getCookie("token") === "") {

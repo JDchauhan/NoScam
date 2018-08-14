@@ -1,5 +1,6 @@
+var currentUserID, currentUserRole, addToCart, editProduct, deleteProduct, listMyProducts;
+
 $(function () {
-    var currentUserID, currentUserRole;
     if (getCookie("token") === "") {
         window.location.href = "../";
     } else {
@@ -29,7 +30,7 @@ $(function () {
         });
     }
 
-    function editProduct(id, name, price, description, image, cc) {
+    editProduct = function(id, name, price, description, image, cc) {
         $('#u_pid').val(id);
         $('#u_pname').val(name);
         $('#u_price').val(price);
@@ -40,7 +41,7 @@ $(function () {
         $('.updateProduct').show();
     }
 
-    function addToCart(id) {
+    addToCart = function(id) {
         $('[data-toggle=popover]').popover('hide');
         quantity = $('#cartItemCount').val();
         data = {
@@ -73,9 +74,9 @@ $(function () {
                 );
             }
         });
-    }
+    };
 
-    function deleteProduct(id) {
+    deleteProduct = function(id) {
         data = {
             productID: id
         };
@@ -112,9 +113,9 @@ $(function () {
                 );
             }
         });
-    }
+    };
 
-    function listMyProducts(currentUserID) {
+    listMyProducts = function(currentUserID) {
         if (currentUserID) {
             $.get("http://localhost:3000/products/seller/" + currentUserID, {},
                 function (data, status, xhr) {
