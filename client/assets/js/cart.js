@@ -66,7 +66,7 @@ $(function () {
         });
     };
 
-    deleteProduct = function(id) {
+    deleteProduct = function (id) {
         data = {
             invoiceID: id
         };
@@ -97,7 +97,7 @@ $(function () {
 
             let tax = Math.round((0.05 * data.results.total) * 100) / 100;
             let charge = Math.round((0.05 * data.results.total) * 100) / 100;
-            let total = data.results.total + tax + charge;
+            let total = Math.round((data.results.total + tax + charge) * 100) / 100;
             $('#cart-subtotal').text(data.results.total);
             $('#cart-tax').text(tax);
             $('#cart-service-charge').text(charge);
