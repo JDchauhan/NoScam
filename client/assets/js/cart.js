@@ -1,4 +1,4 @@
-var currentUserID, currentUserRole, changeQuantity; 
+var currentUserID, currentUserRole, changeQuantity;
 
 $(function () {
     if (getCookie("token") === "") {
@@ -29,13 +29,13 @@ $(function () {
         });
     }
 
-    changeQuantity = function(invoiceId){
+    changeQuantity = function (invoiceId, productID) {
         var quantity = parseFloat($('#qty_' + invoiceId).val());
         var price = parseFloat($('#price_' + invoiceId).text());
         var invoiceCost = parseFloat($('#invoice_price_' + invoiceId).text());
         var updatedInvoice = Math.round(quantity * price * 100) / 100;
-        var subtotal = Math.round((parseFloat($('#cart-subtotal').text())  - invoiceCost + updatedInvoice) * 100) / 100;
-        
+        var subtotal = Math.round((parseFloat($('#cart-subtotal').text()) - invoiceCost + updatedInvoice) * 100) / 100;
+
         let tax = Math.round((0.05 * subtotal) * 100) / 100;
         let charge = Math.round((0.05 * subtotal) * 100) / 100;
         let total = Math.round((subtotal + tax + charge) * 100) / 100;
@@ -45,7 +45,26 @@ $(function () {
         $('#cart-tax').text(tax);
         $('#cart-service-charge').text(charge);
         $('#cart-total').text(total);
-    }
+
+        data = {
+            quantity: quantity,
+            productID: productID,
+            invoiceID: invoiceId
+        };
+
+        $.ajax({
+            url: "http://localhost:3000/cart",
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (result) {
+                console.log("success");
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log("err")
+            }
+        });
+    };
 
     $.get("http://localhost:3000/cart", {},
         function (data, status, xhr) {
@@ -79,7 +98,7 @@ $(function () {
                     '</div>' +
                     '<div id="price_' + invoice._id + '" class="product-price">' + invoice.product.price + '</div>' +
                     '<div class="product-quantity">' +
-                    '<input id="qty_' + invoice._id + '" onchange=changeQuantity("' + invoice._id + '") type="number" value="' + invoice.quantity + '" min="1">' +
+                    '<input id="qty_' + invoice._id + '" onchange=changeQuantity("' + invoice._id + '","' + invoice.product._id + '") type="number" value="' + invoice.quantity + '" min="1">' +
                     '</div>' +
                     '<div id="invoice_price_' + invoice._id + '" class="product-line-price">' + invoice.price + '</div>' +
 
