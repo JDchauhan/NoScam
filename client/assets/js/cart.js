@@ -139,4 +139,31 @@ $(function () {
         }).fail(function (xhr, status, error) {
         console.log(error);
     });
+
+    $(document).on('click', '#checkout', function () {
+        var ids = [];
+        var length = $('.cart-items').children().length;
+        
+        for(let i = 0; i < length; i++){
+            ids.push($('.cart-items').children()[i].id.split('_')[1])
+        }
+
+        data = {
+            invoices: ids
+        };
+
+        $.ajax({
+            url: "http://localhost:3000/cart/purchase",
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (result) {
+                console.log("success");
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log("err");
+            }
+        });
+    });
+
 });
