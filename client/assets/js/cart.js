@@ -1,5 +1,6 @@
+var currentUserID, currentUserRole, changeQuantity; 
+
 $(function () {
-    var currentUserID, currentUserRole;
     if (getCookie("token") === "") {
         window.location.href = "../";
     } else {
@@ -26,6 +27,24 @@ $(function () {
             window.location.href = "../";
             setCookie("token", "", -1);
         });
+    }
+
+    changeQuantity = function(invoiceId){
+        var quantity = parseFloat($('#qty_' + invoiceId).val());
+        var price = parseFloat($('#price_' + invoiceId).text());
+        var invoiceCost = parseFloat($('#invoice_price_' + invoiceId).text());
+        var updatedInvoice = Math.round(quantity * price * 100) / 100;
+        var subtotal = Math.round((parseFloat($('#cart-subtotal').text())  - invoiceCost + updatedInvoice) * 100) / 100;
+        
+        let tax = Math.round((0.05 * subtotal) * 100) / 100;
+        let charge = Math.round((0.05 * subtotal) * 100) / 100;
+        let total = Math.round((subtotal + tax + charge) * 100) / 100;
+
+        $('#invoice_price_' + invoiceId).text(updatedInvoice);
+        $('#cart-subtotal').text(subtotal);
+        $('#cart-tax').text(tax);
+        $('#cart-service-charge').text(charge);
+        $('#cart-total').text(total);
     }
 
     $.get("http://localhost:3000/cart", {},
@@ -58,11 +77,11 @@ $(function () {
                     '<div class="product-title">' + invoice.product.name + '</div>' +
                     '<p class="product-description">' + invoice.product.description + '</p>' +
                     '</div>' +
-                    '<div class="product-price">' + invoice.product.price + '</div>' +
+                    '<div id="price_' + invoice._id + '" class="product-price">' + invoice.product.price + '</div>' +
                     '<div class="product-quantity">' +
-                    '<input type="number" value="' + invoice.quantity + '" min="1">' +
+                    '<input id="qty_' + invoice._id + '" onchange=changeQuantity("' + invoice._id + '") type="number" value="' + invoice.quantity + '" min="1">' +
                     '</div>' +
-                    '<div class="product-line-price">' + invoice.price + '</div>' +
+                    '<div id="invoice_price_' + invoice._id + '" class="product-line-price">' + invoice.price + '</div>' +
 
                     '<div class="product-removal">' +
                     '<button class="remove-product">' +
