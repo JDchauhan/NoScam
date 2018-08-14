@@ -66,7 +66,8 @@ module.exports.getCart = function (req, res) {
         }
 
         Invoice.find({
-                buyer: user._id
+                buyer: user._id,
+                isOrderPlaced: false
             })
             .populate("product", "-__v").exec(function (err, invoices) {
                 if (err) {
