@@ -41,7 +41,15 @@ module.exports = function (app) {
     app.get('/products/seller/:sellerId', VerifyToken, Product.getProductsBySeller);
 
     //Cart
-    app.put('/cart', VerifyToken, Invoice.createInvoice);
+    app.get('/cart', VerifyToken, Invoice.getCart);
+
+    app.put('/cart', VerifyToken, Invoice.updateCart);
+
+    app.post('/cart', VerifyToken, Invoice.createInvoice);
+    
+    app.delete('/cart', VerifyToken, Invoice.deleteInvoice);
+
+    app.put('/cart/purchase', VerifyToken, Invoice.purchase);
 
     // star routes
     app.get('*', function (req, res) {
