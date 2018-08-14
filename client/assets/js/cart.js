@@ -66,6 +66,31 @@ $(function () {
         });
     };
 
+    deleteProduct = function(id) {
+        data = {
+            invoiceID: id
+        };
+
+        $.ajax({
+            url: "http://localhost:3000/cart",
+            type: 'DELETE',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (result) {
+
+                $('#prod_' + id).remove();
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                $('#cart-err').append(
+                    '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                    '</div>'
+                );
+            }
+        });
+    };
+
     $.get("http://localhost:3000/cart", {},
         function (data, status, xhr) {
             console.log(data);
@@ -88,7 +113,7 @@ $(function () {
                 }
 
                 $('.cart-items').append(
-                    '<div class="product">' +
+                    '<div class="product" id="prod_' + invoice._id + '">' +
                     '<div class="product-image">' +
                     '<img src="' + invoice.product.image + '">' +
                     '</div>' +
@@ -103,7 +128,7 @@ $(function () {
                     '<div id="invoice_price_' + invoice._id + '" class="product-line-price">' + invoice.price + '</div>' +
 
                     '<div class="product-removal">' +
-                    '<button class="remove-product">' +
+                    '<button class="remove-product" onclick=deleteProduct("' + invoice._id + '")>' +
                     'Remove' +
                     '</button>' +
                     '</div>' +
