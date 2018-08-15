@@ -151,7 +151,7 @@ module.exports.deleteInvoice = function (req, res) {
     });
 };
 
-module.exports.purchase = function (req, res) {
+module.exports.checkout = function (req, res) {
     AuthoriseUser.getUser(req, res, function (user) {
         if (user.role !== "buyer") {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a buyer.", null);

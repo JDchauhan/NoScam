@@ -60,10 +60,6 @@ var InvoiceSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
   },
-  isAccepted: {
-    type: Boolean,
-    default: false,
-  },
   price: {
     type: Number,
     required: [true, 'please enter a price']
@@ -77,9 +73,6 @@ var InvoiceSchema = new Schema({
   generation_timestamp: {
     type: Date,
     default: Date.now
-  },
-  acceptance_timestamp: {
-    type: Date,
   },
   amountReleased: {
     type: Number,
