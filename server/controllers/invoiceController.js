@@ -5,6 +5,8 @@ Product = mongoose.model('product');
 var Invoice = require('../models/invoiceModel');
 Invoice = mongoose.model('invoice');
 
+var User = require('../controllers/userController');
+
 var responses = require('../helper/responses');
 var AuthoriseUser = require('../helper/authoriseUser');
 
@@ -157,23 +159,53 @@ module.exports.checkout = function (req, res) {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a buyer.", null);
         }
 
-        Invoice.updateMany({
-            _id: {
-                $in: req.body.invoices
+        Invoice.aggregate([{
+                $match: {
+                    isOrderPlaced: false
+                }
+            },
+            {
+                $group: {
+                    _id: '$isOrderPlaced',
+                    amount: {
+                        $sum: "$price"
+                    }
+                }
             }
-        }, {
-            isOrderPlaced: true
-        }, function (err, invoice) {
-            if (err) {
-                console.log(err);
-                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        ], function (err, checkout) {
+            if(checkout.length === 0){
+                return responses.errorMsg(res, 404, "Not Found", "no item in cart.", null);
             }
 
-            if (!invoice) {
-                return responses.errorMsg(res, 404, "Not Found", "order not found.", null);
-            }
+            let tax = Math.round(checkout[0].amount * 100 * (5 / 100)) / 100;
+            let charge = Math.round(checkout[0].amount * 100 * (5 / 100)) / 100;
 
-            return responses.successMsg(res, null);
+            let totalBill = Math.round((checkout[0].amount + tax + charge) * 100) / 100;
+            if (user.balance < totalBill) {
+                return responses.errorMsg(res, 406, "Not Acceptable", "insufficient balance.", null);
+            } else {
+                let remainBalnce = Math.round((user.balance - totalBill) * 100) / 100;
+                User.deduct(req, res, user._id, req.body.invoices, remainBalnce, checkout[0].amount, tax, charge, totalBill);
+            }
         });
+    });
+};
+
+module.exports.finalizeCheckout = function (req, res) {
+    Invoice.updateMany({
+        isOrderPlaced: false
+    }, {
+        isOrderPlaced: true
+    }, function (err, invoice) {
+        if (err) {
+            console.log(err);
+            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        }
+
+        if (!invoice) {
+            return responses.errorMsg(res, 404, "Not Found", "order not found.", null);
+        }
+
+        return responses.successMsg(res, null);
     });
 };

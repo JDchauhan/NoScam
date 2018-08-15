@@ -5,6 +5,8 @@ User = mongoose.model('user');
 var Verification = require('../models/verificationModel');
 Verification = mongoose.model('verification');
 
+var Payment = require('../controllers/paymentController');
+
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var config = require('../config');
@@ -203,5 +205,24 @@ module.exports.sendVerificationLink = function (req, res) {
                     }
                 });
         }
+    });
+};
+
+module.exports.deduct = function (req, res, userID, invoices, balance, amount, tax, charge, bill) {
+
+    User.findOneAndUpdate({
+        _id: userID
+    }, {
+        balance: balance
+    }, function (err, user) {
+        if (err) {
+            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        }
+
+        if (!user) {
+            return responses.errorMsg(res, 404, "Not Found", "user not found.", null);
+        }
+
+        Payment.create(req, res, userID, invoices, amount, tax, charge, bill);
     });
 };
