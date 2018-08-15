@@ -248,7 +248,7 @@ $(function () {
 
         } else {
             $('.addProduct').show();
-
+            $('.cart').hide();
             listMyProducts(currentUserID);
         }
     }

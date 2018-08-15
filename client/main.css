@@ -55,6 +55,11 @@
 	width: 9%;
 }
 
+.product-status {
+	float: right;
+	width: 9%;
+}
+
 .product-line-price {
 	float: left;
 	width: 12%;
@@ -226,6 +231,9 @@ label {
 	.product-removal {
 		width: auto;
 	}
+	.product-status {
+		width: auto;
+	}	
 	.product-line-price {
 		width: 70px;
 	}
@@ -235,6 +243,9 @@ label {
 
 @media screen and (max-width: 350px) {
 	.product-removal {
+		float: right;
+	}
+	.product-status {
 		float: right;
 	}
 	.product-line-price {

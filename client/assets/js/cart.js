@@ -20,6 +20,10 @@ $(function () {
 
                 $(".username").text(fname + " " + lname);
 
+                if(data.results.user.role === "seller"){
+                    window.location.href = "../";
+                }
+
                 currentUserID = data.results.user._id;
                 currentUserRole = data.results.user.role;
 
