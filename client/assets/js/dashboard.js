@@ -25,8 +25,9 @@ $(function () {
                 loadHome(data.results.user.role);
 
             }).fail(function (xhr, status, error) {
-            window.location.href = "../";
+        
             setCookie("token", "", -1);
+            window.location.href = "../";
         });
     }
 
@@ -247,7 +248,7 @@ $(function () {
 
         } else {
             $('.addProduct').show();
-
+            $('.cart').hide();
             listMyProducts(currentUserID);
         }
     }

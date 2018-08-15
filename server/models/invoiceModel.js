@@ -48,6 +48,14 @@ var InvoiceSchema = new Schema({
     type: Boolean,
     default: false
   },
+  isOrderComplete: {
+    type: Boolean,
+    default: false
+  },
+  status: {
+    type: String,
+    default: "pending"
+  },
   seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
@@ -59,10 +67,6 @@ var InvoiceSchema = new Schema({
   buyer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
-  },
-  isAccepted: {
-    type: Boolean,
-    default: false,
   },
   price: {
     type: Number,
@@ -77,9 +81,6 @@ var InvoiceSchema = new Schema({
   generation_timestamp: {
     type: Date,
     default: Date.now
-  },
-  acceptance_timestamp: {
-    type: Date,
   },
   amountReleased: {
     type: Number,

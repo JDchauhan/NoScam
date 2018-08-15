@@ -49,7 +49,9 @@ module.exports = function (app) {
     
     app.delete('/cart', VerifyToken, Invoice.deleteInvoice);
 
-    app.put('/cart/purchase', VerifyToken, Invoice.purchase);
+    app.put('/cart/checkout', VerifyToken, Invoice.checkout);
+
+    app.get('/orders', VerifyToken, Invoice.getOrders);
 
     // star routes
     app.get('*', function (req, res) {

@@ -20,6 +20,10 @@ $(function () {
 
                 $(".username").text(fname + " " + lname);
 
+                if(data.results.user.role === "seller"){
+                    window.location.href = "../";
+                }
+
                 currentUserID = data.results.user._id;
                 currentUserRole = data.results.user.role;
 
@@ -81,6 +85,9 @@ $(function () {
                 $('#prod_' + id).remove();
             },
             error: function (xhr, textStatus, errorThrown) {
+                let errMsg = xhr.responseJSON.message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                    
                 $('#cart-err').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
@@ -153,15 +160,29 @@ $(function () {
         };
 
         $.ajax({
-            url: "http://localhost:3000/cart/purchase",
+            url: "http://localhost:3000/cart/checkout",
             type: 'PUT',
             data: JSON.stringify(data),
             contentType: 'application/json',
             success: function (result) {
-                console.log("success");
+                $('.product').remove();
+                $('#cart-err').append(
+                    '<div class="alert alert-success alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Congratulation! </strong>Your order has been placed' +
+                    '</div>'
+                );
             },
             error: function (xhr, textStatus, errorThrown) {
-                console.log("err");
+                let errMsg = xhr.responseJSON.message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                    
+                $('#cart-err').append(
+                    '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                    '</div>'
+                );
             }
         });
     });
