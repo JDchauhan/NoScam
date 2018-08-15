@@ -173,7 +173,7 @@ module.exports.checkout = function (req, res) {
                 }
             }
         ], function (err, checkout) {
-            if(checkout.length === 0){
+            if (checkout.length === 0) {
                 return responses.errorMsg(res, 404, "Not Found", "no item in cart.", null);
             }
 
@@ -207,5 +207,41 @@ module.exports.finalizeCheckout = function (req, res) {
         }
 
         return responses.successMsg(res, null);
+    });
+};
+
+module.exports.getOrders = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        let query;
+        if (user.role === "seller") {
+            query = {
+                seller: user._id,
+                isOrderPlaced: true,
+                isOrderComplete: false,
+            };
+        } else {
+            query = {
+                buyer: user._id,
+                isOrderPlaced: true,
+                isOrderComplete: false,
+            };
+        }
+
+        Invoice.find(query)
+            .populate("product", "-__v").exec(function (err, invoices) {
+                if (err) {
+                    console.log(err);
+                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                }
+
+                if (!invoices) {
+                    return responses.errorMsg(res, 404, "Not Found", "nothing in cart.", null);
+                }
+
+                results = {
+                    invoices: invoices,
+                };
+                return responses.successMsg(res, results);
+            });
     });
 };

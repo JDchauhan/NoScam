@@ -51,6 +51,8 @@ module.exports = function (app) {
 
     app.put('/cart/checkout', VerifyToken, Invoice.checkout);
 
+    app.get('/orders', VerifyToken, Invoice.getOrders);
+
     // star routes
     app.get('*', function (req, res) {
         return responses.errorMsg(res, 404, "Not Found", "path not found.", null);
