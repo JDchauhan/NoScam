@@ -60,7 +60,7 @@ $(function () {
                     invoice.quantity +
                     '</div>' +
                     '<div id="invoice_price_' + invoice._id + '" class="product-line-price">' + invoice.price + '</div>' +
-                    '<div class="product-status">' + "pending" + '</div>' +
+                    '<div class="product-status">' + invoice.status + '</div>' +
 
                     '</div>'
                 );

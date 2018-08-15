@@ -48,6 +48,14 @@ var InvoiceSchema = new Schema({
     type: Boolean,
     default: false
   },
+  isOrderComplete: {
+    type: Boolean,
+    default: false
+  },
+  status: {
+    type: String,
+    default: "pending"
+  },
   seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user'
