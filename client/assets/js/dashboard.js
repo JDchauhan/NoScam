@@ -120,6 +120,7 @@ $(function () {
     listMyProducts = function (currentUserID) {
         if (currentUserID) {
             getSellerNextProducts(1, currentUserID);
+            $('#seller_prod_next').attr("style", "display:inline-block;");
         } else {
 
             $('.listProducts').empty();
@@ -252,6 +253,7 @@ $(function () {
             $('.addProduct').hide();
             $('.listProducts').hide();
             nextProducts(1);
+            $('#buyer_prod_next').attr("style", "display:inline-block;");
 
         } else {
             $('.addProduct').show();
