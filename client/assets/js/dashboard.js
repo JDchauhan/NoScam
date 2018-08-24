@@ -1,4 +1,5 @@
 var currentUserID, currentUserRole, addToCart, editProduct, deleteProduct, listMyProducts;
+let nextProducts, getSellerNextProducts;
 
 $(function () {
     if (getCookie("token") === "") {
@@ -25,13 +26,13 @@ $(function () {
                 loadHome(data.results.user.role);
 
             }).fail(function (xhr, status, error) {
-        
+
             setCookie("token", "", -1);
             window.location.href = "../";
         });
     }
 
-    editProduct = function(id, name, price, description, image, cc) {
+    editProduct = function (id, name, price, description, image, cc) {
         $('#u_pid').val(id);
         $('#u_pname').val(name);
         $('#u_price').val(price);
@@ -42,7 +43,7 @@ $(function () {
         $('.updateProduct').show();
     }
 
-    addToCart = function(id) {
+    addToCart = function (id) {
         $('[data-toggle=popover]').popover('hide');
         quantity = $('#cartItemCount').val();
         data = {
@@ -77,7 +78,7 @@ $(function () {
         });
     };
 
-    deleteProduct = function(id) {
+    deleteProduct = function (id) {
         data = {
             productID: id
         };
@@ -116,12 +117,78 @@ $(function () {
         });
     };
 
-    listMyProducts = function(currentUserID) {
+    listMyProducts = function (currentUserID) {
         if (currentUserID) {
-            $.get("http://localhost:3000/products/seller/" + currentUserID, {},
+            getSellerNextProducts(1, currentUserID);
+            $('#seller_prod_next').attr("style", "display:inline-block;");
+        } else {
+
+            $('.listProducts').empty();
+            $('.listProducts').append('<div class="col-md-12">Unable to fetch at this moment</div>');
+        }
+    }
+
+    nextProducts = function(page) {
+        $.get("http://localhost:3000/products/" + page, {},
+            function (data, status, xhr) {
+                console.log(data);
+                data.results.products.forEach(product => {
+                    if (!product.image) {
+                        product.image = "../assets/images/test.jpg";
+                    }
+                    var description = "";
+                    if (product.description && product.description !== "") {
+                        description = '<div> Description: ' + product.description + '</div>';
+                    }
+
+                    $('.buyerDashboardContainer').append(
+                        '<figure class="col-md-3">' +
+                        '<a data-toggle="popover" data-id="' + product._id + '" data-img="' + product.image + '" title="' + product.name + '" data-placement="bottom" data-text="' +
+                        '<div>' +
+                        "Price: " + product.price +
+                        '</div>' +
+                        description +
+                        '">' +
+                        '<img alt="' + product.name + '" src=' + product.image + ' class="img-fluid">' +
+                        '</a>' +
+                        '<figcaption class="figure-caption text-right">' +
+                        '<div>' +
+                        product.name +
+                        '</div>' +
+                        '<div>' +
+                        product.price +
+                        '</div>' +
+                        '</figcaption>' +
+                        '</figure>'
+                    );
+                    
+                    $('[data-toggle="popover"]').popover({
+                        html: true,
+                        content: function () {
+                            return '<img src="' + $(this).data('img') + '" height="40px" width="40px"/>' +
+
+                                '<div>' + $(this).data('text') + '</div>' +
+
+                                '<form>' +
+                                '<br/>' +
+                                '<div class="form-group">' +
+                                '<input type="number" class="form-control" id="cartItemCount" value=1>' +
+                                '</div>' +
+                                '<button type="button" class="btn btn-default popover-btn"  onclick=addToCart("' + $(this).data('id') + '")>Add to cart</button>' +
+                                '</form>';
+                        }
+                    });
+                });
+                $('#buyer_prod_next').attr('onclick', 'nextProducts(' + (page + 1) + ')');
+            }).fail(function (xhr, status, error) {
+            console.log(error);
+        });
+    };
+
+        getSellerNextProducts = function(page, currentUserID){
+            $.get("http://localhost:3000/products/" + page + "/seller/" + currentUserID, {},
                 function (data, status, xhr) {
                     console.log(data);
-                    $('.listProducts').empty();
                     data.results.products.forEach(product => {
                         if (!product.image) {
                             product.image = "../assets/images/test.jpg";
@@ -173,78 +240,20 @@ $(function () {
                         });
 
                         $('#btn_update_form').addClass("btn-success");
-
                     });
+                    $('#seller_prod_next').attr('onclick', 'getSellerNextProducts(' + (page + 1) + ',"' + currentUserID + '")');
                 }).fail(function (xhr, status, error) {
                 $('.listProducts').empty();
                 $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
             });
-        } else {
-
-            $('.listProducts').empty();
-            $('.listProducts').append('<div class="col-md-12">Unable to fetch at this moment</div>');
-        }
-    }
+        };
 
     function loadHome(role) {
         if (role === "buyer") {
             $('.addProduct').hide();
             $('.listProducts').hide();
-
-            $.get("http://localhost:3000/products", {},
-                function (data, status, xhr) {
-                    console.log(data);
-                    data.results.products.forEach(product => {
-                        if (!product.image) {
-                            product.image = "../assets/images/test.jpg";
-                        }
-                        var description = "";
-                        if (product.description && product.description !== "") {
-                            description = '<div> Description: ' + product.description + '</div>';
-                        }
-
-                        $('.buyerDashboardContainer').append(
-                            '<figure class="col-md-3">' +
-                            '<a data-toggle="popover" data-id="' + product._id + '" data-img="' + product.image + '" title="' + product.name + '" data-placement="bottom" data-text="' +
-                            '<div>' +
-                            "Price: " + product.price +
-                            '</div>' +
-                            description +
-                            '">' +
-                            '<img alt="' + product.name + '" src=' + product.image + ' class="img-fluid">' +
-                            '</a>' +
-                            '<figcaption class="figure-caption text-right">' +
-                            '<div>' +
-                            product.name +
-                            '</div>' +
-                            '<div>' +
-                            product.price +
-                            '</div>' +
-                            '</figcaption>' +
-                            '</figure>'
-                        );
-                        $('[data-toggle="popover"]').popover({
-                            html: true,
-                            content: function () {
-                                return '<img src="' + $(this).data('img') + '" height="40px" width="40px"/>' +
-
-                                    '<div>' + $(this).data('text') + '</div>' +
-
-                                    '<form>' +
-                                    '<br/>' +
-                                    '<div class="form-group">' +
-                                    '<input type="number" class="form-control" id="cartItemCount" value=1>' +
-                                    '</div>' +
-                                    '<button type="button" class="btn btn-default popover-btn"  onclick=addToCart("' + $(this).data('id') + '")>Add to cart</button>' +
-                                    '</form>';
-                            }
-                        });
-                    });
-
-                }).fail(function (xhr, status, error) {
-                console.log(error);
-            });
-
+            nextProducts(1);
+            $('#buyer_prod_next').attr("style", "display:inline-block;");
 
         } else {
             $('.addProduct').show();
