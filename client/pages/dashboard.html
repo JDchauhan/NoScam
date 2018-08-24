@@ -69,12 +69,17 @@
 
     <div class="container">
         <!-- for buyer-->
-        <div class="row buyerDashboardContainer">
-            <div class="col-md-12" id="buyer-dashboard-err">
-
+        <div>
+            <div class="row buyerDashboardContainer">
+                <div class="col-md-12" id="buyer-dashboard-err">
+    
+                </div>
             </div>
+            <div class="buyer_prod_next text-center">
+                <button class="btn btn-info" id="buyer_prod_next" onclick=nextProducts(2)>Next</button>
+            </div>    
         </div>
-
+        
         <!-- for seller-->
         <div class="row">
             <div class="col-md-6 addProduct">
@@ -144,12 +149,17 @@
             </div>
 
             <div class="col-md-6">
-                <h1 class="seller"></h1>
-                <div class="row listProducts">
-
+                <div>
+                    <h1 class="seller"></h1>
+                    <div class="row listProducts">
+    
+                    </div>
                 </div>
+                <div class="seller_prod_next text-center">
+                    <button class="btn btn-info" id="seller_prod_next" onclick=getSellerNextProducts(2)>Next</button>
+                </div>            
             </div>
-
+            
         </div>
     </div>
     </div>

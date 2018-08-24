@@ -30,7 +30,7 @@ module.exports = function (app) {
 
 
     //product
-    app.get('/products', VerifyToken, Product.getProducts);
+    app.get('/products/:page', VerifyToken, Product.getProducts);
     
     app.post('/products', VerifyToken, Product.addProduct);
 
@@ -38,7 +38,7 @@ module.exports = function (app) {
 
     app.delete('/products', VerifyToken, Product.deleteProduct);
 
-    app.get('/products/seller/:sellerId', VerifyToken, Product.getProductsBySeller);
+    app.get('/products/:page/seller/:sellerId', VerifyToken, Product.getProductsBySeller);
 
     //Cart
     app.get('/cart', VerifyToken, Invoice.getCart);

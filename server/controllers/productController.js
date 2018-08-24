@@ -6,6 +6,7 @@ var responses = require('../helper/responses');
 var AuthoriseUser = require('../helper/authoriseUser');
 
 var errors, results;
+var perPage = 5;
 
 module.exports.addProduct = function (req, res) {
     AuthoriseUser.getUser(req, res, function (user) {
@@ -45,7 +46,7 @@ module.exports.addProduct = function (req, res) {
         });
     });
 };
-
+                    
 module.exports.updateProduct = function (req, res) {
     AuthoriseUser.getUser(req, res, function (user) {
         if (user.role !== "seller") {
@@ -78,9 +79,13 @@ module.exports.updateProduct = function (req, res) {
 };
 
 module.exports.getProducts = function (req, res) {
-    AuthoriseUser.getUser(req, res, function (user) {
+    let page = req.params.page || 1;
 
-        Product.find({}, function (err, products) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        Product.find({})
+        .skip((perPage * page) - perPage)
+        .limit(perPage)
+        .exec(function (err, products) {
             if (err) {
                 console.log(err);
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
@@ -119,10 +124,14 @@ module.exports.deleteProduct = function (req, res) {
 };
 
 module.exports.getProductsBySeller = function (req, res) {
-    AuthoriseUser.getUser(req, res, function (user) {
+    let page = req.params.page || 1;
+
+    AuthoriseUser.getUser(req, res, function (user) {    
         Product.find({
             seller: req.params.sellerId
-        }, function (err, products) {
+        }).skip((perPage * page) - perPage)
+        .limit(perPage)
+        .exec(function (err, products) {
             if (err) {
                 console.log(err);
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
