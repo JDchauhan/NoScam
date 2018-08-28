@@ -226,3 +226,20 @@ module.exports.deduct = function (req, res, userID, invoices, balance, amount, t
         Payment.create(req, res, userID, invoices, amount, tax, charge, bill);
     });
 };
+
+module.exports.addMoney = function(req, res, email, amount){
+    User.findOneAndUpdate({
+        email: email
+    }, {
+        $inc: { balance: amount }
+    },
+    function (err, user) {
+        if (err) {
+            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        } else {
+            user.password = undefined;
+
+            return responses.successMsg(res, null);
+        }
+    });
+}

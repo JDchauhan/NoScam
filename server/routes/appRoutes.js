@@ -6,7 +6,7 @@ module.exports = function (app) {
     var User = require('../controllers/userController');
     var Product = require('../controllers/productController');
     var Invoice = require('../controllers/invoiceController');
-    var payController = require('../controllers/payController');
+    var transactionController = require('../controllers/transactionController');
     var errors, results;
 
     // Routes
@@ -55,9 +55,9 @@ module.exports = function (app) {
 
 
 
-    app.post('/payment/payumoney',payController.payUMoneyPayment);
+    app.post('/payment/payumoney',transactionController.payUMoneyPayment);
 
-    app.post('/payment/payumoney/response', payController.payUMoneyPaymentResponse);
+    app.post('/payment/payumoney/response', transactionController.payUMoneyPaymentResponse);
 
     
     // star routes
