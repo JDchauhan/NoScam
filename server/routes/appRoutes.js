@@ -51,10 +51,10 @@ module.exports = function (app) {
 
     app.put('/cart/checkout', VerifyToken, Invoice.checkout);
 
-    app.get('/orders', VerifyToken, Invoice.getOrders);
+    app.get('/orders/:page', VerifyToken, Invoice.getOrders);
 
 
-
+    //transactions
     app.post('/payment/payumoney',transactionController.payUMoneyPayment);
 
     app.post('/payment/payumoney/response', transactionController.payUMoneyPaymentResponse);
