@@ -6,7 +6,7 @@ module.exports = function (app) {
     var User = require('../controllers/userController');
     var Product = require('../controllers/productController');
     var Invoice = require('../controllers/invoiceController');
-    
+    var transactionController = require('../controllers/transactionController');
     var errors, results;
 
     // Routes
@@ -51,8 +51,15 @@ module.exports = function (app) {
 
     app.put('/cart/checkout', VerifyToken, Invoice.checkout);
 
-    app.get('/orders', VerifyToken, Invoice.getOrders);
+    app.get('/orders/:page', VerifyToken, Invoice.getOrders);
 
+
+    //transactions
+    app.post('/payment/payumoney',transactionController.payUMoneyPayment);
+
+    app.post('/payment/payumoney/response', transactionController.payUMoneyPaymentResponse);
+
+    
     // star routes
     app.get('*', function (req, res) {
         return responses.errorMsg(res, 404, "Not Found", "path not found.", null);

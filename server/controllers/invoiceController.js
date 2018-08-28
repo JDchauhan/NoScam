@@ -12,6 +12,8 @@ var AuthoriseUser = require('../helper/authoriseUser');
 
 var errors, results;
 
+var perPage = 5;
+
 module.exports.createInvoice = function (req, res) {
     AuthoriseUser.getUser(req, res, function (user) {
         if (user.role !== "buyer") {
@@ -211,6 +213,7 @@ module.exports.finalizeCheckout = function (req, res) {
 };
 
 module.exports.getOrders = function (req, res) {
+    let page = req.params.page || 1;
     AuthoriseUser.getUser(req, res, function (user) {
         let query;
         if (user.role === "seller") {
@@ -228,7 +231,10 @@ module.exports.getOrders = function (req, res) {
         }
 
         Invoice.find(query)
-            .populate("product", "-__v").exec(function (err, invoices) {
+            .populate("product", "-__v")
+            .skip((perPage * page) - perPage)
+            .limit(perPage)
+            .exec(function (err, invoices) {
                 if (err) {
                     console.log(err);
                     return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
