@@ -53,6 +53,51 @@ $(function () {
             alert("Please enter an amount")
         }
     });
+
+    $('#stripe_payment').on('click', function (e) {
+        if ($('#amount').val() && $('#amount').val() >= 1) {
+            RequestData.amount = $('#amount').val();
+        } else {
+            alert("Please enter an amount");
+            return;
+        }
+
+        var handler = StripeCheckout.configure({
+            key: 'pk_test_a09RA0CrRjZQFvHO1gcQ1way',
+            image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+            locale: 'auto',
+            token: function (token) {
+                $.ajax({
+                    url: "http://localhost:3000/payment/stripe",
+                    type: 'POST',
+                    data: JSON.stringify({token:token, amount: RequestData.amount}),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        console.log("success");
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log("error");
+                    }
+                });
+            }
+        });
+
+        //Open Checkout with further options:
+        handler.open({
+            name: 'Hexerve',
+            description: 'Screenshot taker tool',
+            zipCode: true,
+            amount: RequestData.amount,
+            email: RequestData.email
+        });
+        e.preventDefault();
+    });
+
+    // Close Checkout on page navigation:
+    window.addEventListener('popstate', function () {
+        handler.close();
+    });
+
 });
 
 

@@ -3,6 +3,9 @@ var Transaction = require('../models/transactionModel');
 Transaction = mongoose.model('transaction');
 
 var userController = require('../controllers/userController');
+var config = require('../config');
+
+var stripe = require("stripe")(config.stripeKey);
 
 
 var jsSHA = require("jssha");
@@ -43,10 +46,9 @@ exports.payUMoneyPaymentResponse = function (req, res) {
             email: pd.email,
             amount: pd.net_amount_debit,
             txnID: pd.payuMoneyId
-        }, function(err, response){
-            if(err){
-                if(err.code && err.code == 11000){
-                } else {
+        }, function (err, response) {
+            if (err) {
+                if (err.code && err.code == 11000) {} else {
                     return console.log(err);
                 }
                 res.send({
@@ -61,4 +63,35 @@ exports.payUMoneyPaymentResponse = function (req, res) {
             'status': "Error occured"
         });
     }
-}
+};
+
+exports.stripePayment = function (req, res) {
+    // Token is created using Checkout or Elements!
+    // Get the payment token ID submitted by the form:
+    const token = req.body.token.id; // Using Express
+    const charge = stripe.charges.create({
+        amount: req.body.amount,
+        currency: 'usd',
+        description: 'Example charge',
+        source: token,
+    }, function (err, charge) {
+        if (err) {
+            console.log(err);
+            return res.send({
+                'status': "Error occured"
+            });
+        }
+
+        Transaction.create({
+            email: req.body.token.email,
+            amount: req.body.amount,
+            txnID: charge.id
+        }, function (err, response) {
+            if (err) {
+                console.log(err);
+            }
+        });
+
+        userController.addMoney(req, res, req.body.token.email, req.body.amount);
+    });
+};

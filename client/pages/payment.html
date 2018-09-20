@@ -21,8 +21,11 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="../main.css" />
     <script src="../main.js"></script>
-    <script id="bolt" src="https://sboxcheckout-static.citruspay.com/bolt/run/bolt.min.js" bolt- color="<color-code>" bolt-logo="<image path>"></script>
+    <script id="bolt" src="https://sboxcheckout-static.citruspay.com/bolt/run/bolt.min.js" bolt- color="<color-code>"
+        bolt-logo="<image path>"></script>
+    <script src="https://checkout.stripe.com/checkout.js"></script>
     <script src="../assets/js/payment.js"></script>
+
 </head>
 
 <body>
@@ -78,15 +81,15 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <form>
-                    <div class="form-group">
-                        <label for="amount">Add Amount:</label>
-                        <input class="form-control" id="amount" min="1" type="number" placeholder="Amount" />
-                    </div>
-                    <div class="text-right">
-                        <button class="btn btn-success" id="payment">Pay via PayU money</button>
-                    </div>
-                </form>
+
+                <div class="form-group">
+                    <label for="amount">Add Amount:</label>
+                    <input class="form-control" id="amount" min="1" type="number" placeholder="Amount" />
+                </div>
+                <div class="">
+                    <button class="btn btn-success" id="stripe_payment">Pay via Stripe</button>
+                    <button class="btn btn-success" id="payment">Pay via PayU money</button>
+                </div>
             </div>
         </div>
     </div>
