@@ -102,7 +102,36 @@ $(function () {
     getOrders(1);
 
     updateOrder = function(id, val){
-    
+        let data = {
+            _id: id,
+            val: val
+        };
+        $.ajax({
+            url: "http://localhost:3000/orders/status",
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (result) {
+                $('.product').remove();
+                $('#msg').append(
+                    '<div class="alert alert-success alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Congratulation! </strong>Status has been updated' +
+                    '</div>'
+                );
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                let errMsg = xhr.responseJSON.message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                $('#msg').append(
+                    '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                    '</div>'
+                );
+            }
+        });
     };
 
 });
