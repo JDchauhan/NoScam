@@ -244,10 +244,11 @@ module.exports.getOrders = function (req, res) {
             if (!count[0]) {
                 var results = {
                     users: [],
-                    totalUsers: 0,
+                    total: 0,
                     totalPages: 0,
                     currentPage: req.params.page,
-                    currentPageRecords: 0
+                    currentPageRecords: 0,
+                    isNext: null
                 };
                 return responses.successMsg(res, results);
             }
