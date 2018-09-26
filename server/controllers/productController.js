@@ -161,20 +161,54 @@ module.exports.getProductsBySeller = function (req, res) {
     let page = req.params.page || 1;
 
     AuthoriseUser.getUser(req, res, function (user) {
-        Product.find({
-                seller: req.params.sellerId
-            }).skip((perPage * page) - perPage)
-            .limit(perPage)
-            .exec(function (err, products) {
-                if (err) {
-                    console.log(err);
-                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        Product.aggregate([{
+                $match: {}
+            },
+            {
+                $group: {
+                    _id: 'count',
+                    count: {
+                        $sum: 1
+                    }
                 }
-
-                results = {
-                    products: products
+            }
+        ], function (err, count) {
+            if (!count[0]) {
+                var results = {
+                    users: [],
+                    total: 0,
+                    totalPages: 0,
+                    currentPage: req.params.page,
+                    currentPageRecords: 0,
+                    isNext: null
                 };
                 return responses.successMsg(res, results);
-            });
+            }
+
+            Product.find({
+                    seller: req.params.sellerId
+                }).skip((perPage * page) - perPage)
+                .limit(perPage)
+                .exec(function (err, products) {
+                    if (err) {
+                        console.log(err);
+                        return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                    }
+
+                    var results = {
+                        products: products,
+                        total: count[0].count,
+                        totalPages: Math.ceil(count[0].count / perPage),
+                        currentPage: req.params.page,
+                        currentPageRecords: products.length,
+                        isNext: null
+                    };
+
+                    if (results.totalPages - req.params.page > 0) {
+                        results.isNext = true;
+                    }
+                    return responses.successMsg(res, results);
+                });
+        });
     });
 };

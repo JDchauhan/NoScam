@@ -245,6 +245,9 @@ $(function () {
                         $('#btn_update_form').addClass("btn-success");
                     });
                     $('#seller_prod_next').attr('onclick', 'getSellerNextProducts(' + (page + 1) + ',"' + currentUserID + '")');
+                    if (data.results.isNext === null) {
+                        $('#seller_prod_next').attr('style','display:none');    
+                    }
                 }).fail(function (xhr, status, error) {
                 $('.listProducts').empty();
                 $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
