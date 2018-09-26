@@ -54,6 +54,7 @@ var InvoiceSchema = new Schema({
   },
   status: {
     type: String,
+    enum: ['pending', 'complete', 'process', 'hold', 'canceled'],
     default: "pending"
   },
   seller: {
