@@ -37,6 +37,9 @@ $(function () {
 
                 currentUserID = data.results.user._id;
                 currentUserRole = data.results.user.role;
+                if (currentUserRole === "seller") {
+                    $('.cart').hide();
+                }
             }).fail(function (xhr, status, error) {
 
             setCookie("token", "", -1);
