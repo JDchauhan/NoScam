@@ -20,7 +20,7 @@ $(function () {
 
                 $(".username").text(fname + " " + lname);
 
-                if(data.results.user.role === "seller"){
+                if (data.results.user.role === "seller") {
                     window.location.href = "../";
                 }
 
@@ -81,13 +81,26 @@ $(function () {
             data: JSON.stringify(data),
             contentType: 'application/json',
             success: function (result) {
+                let removedCost = parseInt($('#invoice_price_' + id).text());
+                let subtotal = parseInt($('#cart-subtotal').text() - removedCost);
+                subtotal = Math.round((subtotal) * 100) / 100;
+
+                $('#cart-subtotal').text(subtotal);
+
+                let tax = Math.round((0.05 * subtotal) * 100) / 100;
+                let charge = Math.round((0.05 * subtotal) * 100) / 100;
+                let total = Math.round((subtotal + tax + charge) * 100) / 100;
+
+                $('#cart-tax').text(tax);
+                $('#cart-service-charge').text(charge);
+                $('#cart-total').text(total);
 
                 $('#prod_' + id).remove();
             },
             error: function (xhr, textStatus, errorThrown) {
                 let errMsg = xhr.responseJSON.message;
                 errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-                    
+
                 $('#cart-err').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
@@ -105,7 +118,7 @@ $(function () {
             let tax = Math.round((0.05 * data.results.total) * 100) / 100;
             let charge = Math.round((0.05 * data.results.total) * 100) / 100;
             let total = Math.round((data.results.total + tax + charge) * 100) / 100;
-            $('#cart-subtotal').text(data.results.total);
+            $('#cart-subtotal').text(Math.round((data.results.total) * 100) / 100);
             $('#cart-tax').text(tax);
             $('#cart-service-charge').text(charge);
             $('#cart-total').text(total);
@@ -150,8 +163,8 @@ $(function () {
     $(document).on('click', '#checkout', function () {
         var ids = [];
         var length = $('.cart-items').children().length;
-        
-        for(let i = 0; i < length; i++){
+
+        for (let i = 0; i < length; i++) {
             ids.push($('.cart-items').children()[i].id.split('_')[1])
         }
 
@@ -176,7 +189,7 @@ $(function () {
             error: function (xhr, textStatus, errorThrown) {
                 let errMsg = xhr.responseJSON.message;
                 errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-                    
+
                 $('#cart-err').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +

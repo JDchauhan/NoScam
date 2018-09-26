@@ -1,5 +1,5 @@
 var currentUserID, currentUserRole, changeQuantity, deleteProduct;
-var getOrders;  
+var getOrders;
 
 $(function () {
     if (getCookie("token") === "") {
@@ -34,8 +34,8 @@ $(function () {
         });
     }
 
-    getOrders = function(page) {
-        $.get("http://localhost:3000/orders/" + page , {},
+    getOrders = function (page) {
+        $.get("http://localhost:3000/orders/" + page, {},
             function (data, status, xhr) {
                 console.log(data);
 
@@ -67,9 +67,13 @@ $(function () {
                         '</div>'
                     );
                 });
-                $('#order_prod_next').attr('style','display:inline-block;');
-                $('#order_prod_next').attr('onclick', 'getOrders(' + ( page + 1 ) + ')');
-                
+
+                if (data.results.isNext !== null) {
+                    $('#order_prod_next').attr('style', 'display:inline-block;');
+                    $('#order_prod_next').attr('onclick', 'getOrders(' + (page + 1) + ')');
+                } else {
+                    $('#order_prod_next').attr('style', 'display:none;');
+                }
 
             }).fail(function (xhr, status, error) {
             console.log(error);

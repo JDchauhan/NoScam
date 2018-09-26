@@ -237,7 +237,6 @@ module.exports.addMoney = function(req, res, email, amount){
         if (err) {
             return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
         } else {
-            user.password = undefined;
 
             return responses.successMsg(res, null);
         }
