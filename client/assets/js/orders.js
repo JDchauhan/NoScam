@@ -1,5 +1,5 @@
 var currentUserID, currentUserRole, changeQuantity, deleteProduct;
-var getOrders;
+var getOrders, updateStatus;
 
 $(function () {
     if (getCookie("token") === "") {
@@ -79,7 +79,11 @@ $(function () {
                         '</div>'
                     );
                     if (currentUserRole === "seller") {
-                        $('#status_invoice_' + invoice._id + ' .' + invoice.status).attr('selected','selected');
+                        $('#status_invoice_' + invoice._id + ' .' + invoice.status).attr('selected', 'selected');
+                        $(document).on('change', '#status_invoice_' + invoice._id, function () {
+                            updateOrder(invoice._id, $('#status_invoice_' + invoice._id).val());
+                        });
+
                     }
                 });
 
@@ -96,5 +100,9 @@ $(function () {
     }
 
     getOrders(1);
+
+    updateOrder = function(id, val){
+    
+    };
 
 });
