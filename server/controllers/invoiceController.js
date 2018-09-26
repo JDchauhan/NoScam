@@ -229,25 +229,55 @@ module.exports.getOrders = function (req, res) {
                 isOrderComplete: false,
             };
         }
-
-        Invoice.find(query)
-            .populate("product", "-__v")
-            .skip((perPage * page) - perPage)
-            .limit(perPage)
-            .exec(function (err, invoices) {
-                if (err) {
-                    console.log(err);
-                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+        Invoice.aggregate([{
+                $match: query
+            },
+            {
+                $group: {
+                    _id: 'count',
+                    count: {
+                        $sum: 1
+                    }
                 }
-
-                if (!invoices) {
-                    return responses.errorMsg(res, 404, "Not Found", "nothing in cart.", null);
-                }
-
-                results = {
-                    invoices: invoices,
+            }
+        ], function (err, count) {
+            if (!count[0]) {
+                var results = {
+                    users: [],
+                    totalUsers: 0,
+                    totalPages: 0,
+                    currentPage: req.params.page,
+                    currentPageRecords: 0
                 };
                 return responses.successMsg(res, results);
-            });
+            }
+
+
+            Invoice.find(query)
+                .populate("product", "-__v")
+                .skip((perPage * page) - perPage)
+                .limit(perPage)
+                .exec(function (err, invoices) {
+                    if (err) {
+                        console.log(err);
+                        return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                    }
+
+                    var results = {
+                        invoices: invoices,
+                        total: count[0].count,
+                        totalPages: Math.ceil(count[0].count / perPage),
+                        currentPage: req.params.page,
+                        currentPageRecords: invoices.length,
+                        isNext: null
+                    };
+
+                    if(results.totalPages - req.params.page > 0){
+                        results.isNext = true;
+                    }
+                        
+                    return responses.successMsg(res, results);
+                });
+        });
     });
 };
