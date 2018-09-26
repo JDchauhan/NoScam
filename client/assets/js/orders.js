@@ -47,6 +47,19 @@ $(function () {
                     if (invoice.product.description && invoice.product.description !== "") {
                         invoice.description = '<div> Description: ' + invoice.product.description + '</div>';
                     }
+                    let prodStatus;
+                    if (currentUserRole === "seller") {
+                        prodStatus =
+                            '<select class="form-control product-status" id="status_invoice_' + invoice._id + '">' +
+                            '<option class="complete" value="complete">complete</option>' +
+                            '<option class="process" value="process">process</option>' +
+                            '<option class="pending" value="pending">pending</option>' +
+                            '<option class="hold" value="hold">hold</option>' +
+                            '<option class="canceled" value="canceled">canceled</option>' +
+                            '</select>';
+                    } else {
+                        prodStatus = '<div class="product-status">' + invoice.status + '</div>';
+                    }
 
                     $('.unprocessed-orders').append(
                         '<div class="product" id="prod_' + invoice._id + '">' +
@@ -62,10 +75,12 @@ $(function () {
                         invoice.quantity +
                         '</div>' +
                         '<div id="invoice_price_' + invoice._id + '" class="product-line-price">' + invoice.price + '</div>' +
-                        '<div class="product-status">' + invoice.status + '</div>' +
-
+                        prodStatus +
                         '</div>'
                     );
+                    if (currentUserRole === "seller") {
+                        $('#status_invoice_' + invoice._id + ' .' + invoice.status).attr('selected','selected');
+                    }
                 });
 
                 if (data.results.isNext !== null) {
