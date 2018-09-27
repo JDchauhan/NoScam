@@ -58,20 +58,7 @@ $(function () {
                             '<option class="canceled" value="canceled">canceled</option>' +
                             '</select>';
                         percentageComplete =
-                            '<select class="form-control product-completion" id="completion_invoice_' + invoice._id + '">' +
-                            '<option class="0" value="0">0%</option>' +
-                            '<option class="10" value="10">10%</option>' +
-                            '<option class="20" value="20">20%</option>' +
-                            '<option class="30" value="30">30%</option>' +
-                            '<option class="40" value="40">40%</option>' +
-                            '<option class="50" value="50">50%</option>' +
-                            '<option class="60" value="60">60%</option>' +
-                            '<option class="70" value="70">70%</option>' +
-                            '<option class="80" value="80">80%</option>' +
-                            '<option class="90" value="90">90%</option>' +
-                            '<option class="100" value="100">100%</option>' +
-                            '</select>';
-
+                            '<input class="form-control product-completion" type="Number" min=0 max=100 id="completion_invoice_' + invoice._id + '"/>';
                     } else {
                         percentageComplete = '<div class="product-completion">' + invoice.completion + '</div>';
                         prodStatus = '<div class="product-status">' + invoice.status + '</div>';
