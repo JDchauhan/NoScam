@@ -242,3 +242,36 @@ module.exports.addMoney = function(req, res, email, amount){
         }
     });
 }
+
+module.exports.update = function(req, res){
+    AuthoriseUser.getUser(req, res, function (user) {
+        User.findByIdAndUpdate(user._id, {
+            fname: req.body.fname,
+            mname: req.body.mname,
+            lname: req.body.lname,
+            mobile: req.body.mobile
+        },
+        function (err, user) {
+            if (err) {
+                if (err.name && err.name == "ValidationError") {
+                    errors = {
+                        "index": Object.keys(err.errors)
+                    };
+                    return responses.errorMsg(res, 400, "Bad Request", "validation failed.", errors);
+
+                } else if (err.name && err.name == "CastError") {
+                    errors = {
+                        "index": err.path
+                    };
+                    return responses.errorMsg(res, 400, "Bad Request", "cast error.", errors);
+
+                } else {
+                    console.log(err);
+                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                }
+            } else {
+                return responses.successMsg(res, null);
+            }
+        });
+    });
+};

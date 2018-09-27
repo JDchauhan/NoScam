@@ -26,6 +26,8 @@ module.exports = function (app) {
 
     app.post('/user', User.register);
 
+    app.put('/user',VerifyToken , User.update);
+
     app.get('/user', VerifyToken, User.current_user);
 
 

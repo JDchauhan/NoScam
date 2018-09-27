@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>No Scam - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="../main.css" />
+    <script src="../main.js"></script>
+    <script src="../assets/js/user.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
+        <!-- Brand/logo -->
+        <a class="navbar-brand" href="#">
+            <img src="../assets/images/logo.png" alt="logo" style="width:40px;">
+        </a>
+        <!-- Toggler/collapsibe Button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+            </ul>
+        </div>
+        <div class="collapse navbar-collapse collapsibleNavbar">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item cart">
+                    <a class="nav-link" href="#">Cart</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item orders">
+                    <a class="nav-link" href="./orders.html">Orders</a>
+                </li>
+                <li class="nav-item addMoney">
+                    <a class="nav-link" href="./payment.html">Add Money</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link username" href="#"></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container nav-spacer"></div>
+    <div class="container spacer"></div>
+
+    <div class="container">
+        <div class="user">
+            <div id="msg">
+
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="list-msg"></div>
+                    <form>
+                        <div class="input-group mb-3 input-group-lg container">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Fname</span>
+                            </div>
+                            <input type="text" class="form-control" name="fname" id="fname" placeholder="first name">
+                        </div>
+                        <div class="input-group mb-3 input-group-lg container">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Mname</span>
+                            </div>
+                            <input type="text" class="form-control" name="mname" id="mname" placeholder="middle name">
+                        </div>
+                        <div class="input-group mb-3 input-group-lg container">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Lname</span>
+                            </div>
+                            <input type="text" class="form-control" name="lname" id="lname" placeholder="last name">
+                        </div>
+                        <div class="input-group mb-3 input-group-lg container">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Mobile</span>
+                            </div>
+                            <input type="number" class="form-control" name="mobile" id="mobile" placeholder="18002740561">
+                        </div>
+                        <div class="wrapper text-center">
+                            <div class="btn-group btn-group-lg">
+                                <button type="button" id="update-btn" class="btn wobble-vertical">Update</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
