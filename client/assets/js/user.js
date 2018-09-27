@@ -23,7 +23,7 @@ $(function () {
                 $('#lname').val(lname);
                 $('#mname').val(mname);
                 $('#mobile').val(mobile);
-                
+
                 $(".username").text(fname + " " + lname);
 
                 currentUserID = data.results.user._id;
@@ -38,4 +38,52 @@ $(function () {
         });
     }
 
+    $(document).on('click', '#update-btn', function () {
+        let data = {
+            fname: $('#fname').val(),
+            mname: $('#mname').val(),
+            lname: $('#lname').val(),
+            mobile: $('#mobile').val(),
+        };
+
+        $.ajaxSetup({
+            headers: {
+                'authorization': getCookie("token")
+            }
+        });
+        $.ajax({
+            url: "http://localhost:3000/user",
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (result) {
+                $('#msg').append(
+                    '<div class="alert alert-success alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Congratulation! </strong>Details has been updated successfully' +
+                    '</div>'
+                );
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                if (xhr.readyState === 0) {
+                    return $('#msg').append(
+                        '<div class="alert alert-danger alert-dismissible fade show">' +
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                        '<strong>Oops! </strong>Network Error' +
+                        '</div>'
+                    );
+                }
+
+                let errMsg = xhr.responseJSON.message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                $('#msg').append(
+                    '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                    '</div>'
+                );
+            }
+        });
+    });
 });
