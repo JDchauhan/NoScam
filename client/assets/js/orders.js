@@ -1,5 +1,5 @@
 var currentUserID, currentUserRole, changeQuantity, deleteProduct;
-var getOrders;
+var getOrders, updateStatus;
 
 $(function () {
     if (getCookie("token") === "") {
@@ -47,6 +47,22 @@ $(function () {
                     if (invoice.product.description && invoice.product.description !== "") {
                         invoice.description = '<div> Description: ' + invoice.product.description + '</div>';
                     }
+                    let prodStatus, percentageComplete;
+                    if (currentUserRole === "seller") {
+                        prodStatus =
+                            '<select class="form-control product-status" id="status_invoice_' + invoice._id + '">' +
+                            '<option class="complete" value="complete">complete</option>' +
+                            '<option class="process" value="process">process</option>' +
+                            '<option class="pending" value="pending">pending</option>' +
+                            '<option class="hold" value="hold">hold</option>' +
+                            '<option class="canceled" value="canceled">canceled</option>' +
+                            '</select>';
+                        percentageComplete =
+                            '<input class="form-control product-completion" type="Number" value="' + invoice.completion + '" min=0 max=100 id="completion_invoice_' + invoice._id + '"/>';
+                    } else {
+                        percentageComplete = '<div class="product-completion">' + invoice.completion + '</div>';
+                        prodStatus = '<div class="product-status">' + invoice.status + '</div>';
+                    }
 
                     $('.unprocessed-orders').append(
                         '<div class="product" id="prod_' + invoice._id + '">' +
@@ -62,10 +78,22 @@ $(function () {
                         invoice.quantity +
                         '</div>' +
                         '<div id="invoice_price_' + invoice._id + '" class="product-line-price">' + invoice.price + '</div>' +
-                        '<div class="product-status">' + invoice.status + '</div>' +
-
+                        percentageComplete +
+                        prodStatus +
                         '</div>'
                     );
+                    if (currentUserRole === "seller") {
+                        $('#status_invoice_' + invoice._id + ' .' + invoice.status).attr('selected', 'selected');
+                        $(document).on('change', '#status_invoice_' + invoice._id, function () {
+                            updateOrder(invoice._id, $('#status_invoice_' + invoice._id).val(), "status");
+                        });
+
+                        $('#completion_invoice_' + invoice._id + ' .' + invoice.completion).attr('selected', 'selected');
+                        $(document).on('change', '#completion_invoice_' + invoice._id, function () {
+                            updateOrder(invoice._id, $('#completion_invoice_' + invoice._id).val(), "completion");
+                        });
+
+                    }
                 });
 
                 if (data.results.isNext !== null) {
@@ -81,5 +109,52 @@ $(function () {
     }
 
     getOrders(1);
+
+    updateOrder = function (id, val, field) {
+        let data = {
+            _id: id,
+        };
+
+        if (field == "status") {
+            data.status = val;
+        } else {
+            data.completion = val;
+        }
+
+        $.ajax({
+            url: "http://localhost:3000/orders/status",
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (result) {
+                $('#msg').append(
+                    '<div class="alert alert-success alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Congratulation! </strong>Invoice has been updated successfully' +
+                    '</div>'
+                );
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                if(xhr.readyState === 0){
+                    return $('#msg').append(
+                        '<div class="alert alert-danger alert-dismissible fade show">' +
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                        '<strong>Oops! </strong>Network Error' +
+                        '</div>'
+                    );
+                }
+
+                let errMsg = xhr.responseJSON.message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                $('#msg').append(
+                    '<div class="alert alert-danger alert-dismissible fade show">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<strong>Oops! </strong>' + errMsg +
+                    '</div>'
+                );
+            }
+        });
+    };
 
 });

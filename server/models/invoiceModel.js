@@ -54,7 +54,14 @@ var InvoiceSchema = new Schema({
   },
   status: {
     type: String,
+    enum: ['pending', 'complete', 'process', 'hold', 'canceled'],
     default: "pending"
+  },
+  completion: {
+    type: Number,
+    min: 0,
+    max: 100,
+    default: 0,
   },
   seller: {
     type: mongoose.Schema.Types.ObjectId,

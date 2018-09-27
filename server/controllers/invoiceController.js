@@ -273,12 +273,51 @@ module.exports.getOrders = function (req, res) {
                         isNext: null
                     };
 
-                    if(results.totalPages - req.params.page > 0){
+                    if (results.totalPages - req.params.page > 0) {
                         results.isNext = true;
                     }
-                        
+
                     return responses.successMsg(res, results);
                 });
         });
+    });
+};
+
+module.exports.updateOrderStatus = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        if (user.role !== "seller") {
+            return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
+        }
+
+        let query;
+        if (req.body.status) {
+            query = {
+                status: req.body.status
+            };
+        } else {
+            if(req.body.completion > 100 || req.body.completion < 0 ){
+                return responses.errorMsg(res, 400, "Validation", "completion must be in between 0 to 100 (including).", null);           
+            }
+            query = {
+                completion: req.body.completion
+            };
+        }
+        Invoice.findOneAndUpdate({
+            _id: req.body._id,
+            seller: user._id
+        }, query, function (err, invoice) {
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            if (!invoice) {
+                return responses.errorMsg(res, 404, "Not Found", "invoice not found.", null);
+            }
+
+            return responses.successMsg(res, null);
+        });
+
+
     });
 };
