@@ -59,6 +59,7 @@ $(function () {
                             '</select>';
                         percentageComplete =
                             '<select class="form-control product-completion" id="completion_invoice_' + invoice._id + '">' +
+                            '<option class="0" value="0">0%</option>' +
                             '<option class="10" value="10">10%</option>' +
                             '<option class="20" value="20">20%</option>' +
                             '<option class="30" value="30">30%</option>' +
