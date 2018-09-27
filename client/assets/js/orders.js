@@ -104,7 +104,7 @@ $(function () {
     updateOrder = function(id, val){
         let data = {
             _id: id,
-            val: val
+            status: val
         };
         $.ajax({
             url: "http://localhost:3000/orders/status",
