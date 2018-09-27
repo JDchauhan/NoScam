@@ -295,6 +295,9 @@ module.exports.updateOrderStatus = function (req, res) {
                 status: req.body.status
             };
         } else {
+            if(req.body.completion > 100 || req.body.completion < 0 ){
+                return responses.errorMsg(res, 400, "Validation", "completion must be in between 0 to 100 (including).", null);           
+            }
             query = {
                 completion: req.body.completion
             };

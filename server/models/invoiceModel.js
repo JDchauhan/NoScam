@@ -61,7 +61,7 @@ var InvoiceSchema = new Schema({
     type: Number,
     min: 0,
     max: 100,
-    default: 0
+    default: 0,
   },
   seller: {
     type: mongoose.Schema.Types.ObjectId,

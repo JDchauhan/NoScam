@@ -58,7 +58,7 @@ $(function () {
                             '<option class="canceled" value="canceled">canceled</option>' +
                             '</select>';
                         percentageComplete =
-                            '<input class="form-control product-completion" type="Number" min=0 max=100 id="completion_invoice_' + invoice._id + '"/>';
+                            '<input class="form-control product-completion" type="Number" value="' + invoice.completion + '" min=0 max=100 id="completion_invoice_' + invoice._id + '"/>';
                     } else {
                         percentageComplete = '<div class="product-completion">' + invoice.completion + '</div>';
                         prodStatus = '<div class="product-status">' + invoice.status + '</div>';
