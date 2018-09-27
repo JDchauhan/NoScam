@@ -289,12 +289,20 @@ module.exports.updateOrderStatus = function (req, res) {
             return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
         }
 
+        let query;
+        if (req.body.status) {
+            query = {
+                status: req.body.status
+            };
+        } else {
+            query = {
+                completion: req.body.completion
+            };
+        }
         Invoice.findOneAndUpdate({
             _id: req.body._id,
             seller: user._id
-        },{
-            status: req.body.status
-        }, function(err, invoice){
+        }, query, function (err, invoice) {
             if (err) {
                 console.log(err);
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);

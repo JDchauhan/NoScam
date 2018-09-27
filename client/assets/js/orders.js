@@ -47,7 +47,7 @@ $(function () {
                     if (invoice.product.description && invoice.product.description !== "") {
                         invoice.description = '<div> Description: ' + invoice.product.description + '</div>';
                     }
-                    let prodStatus;
+                    let prodStatus, percentageComplete;
                     if (currentUserRole === "seller") {
                         prodStatus =
                             '<select class="form-control product-status" id="status_invoice_' + invoice._id + '">' +
@@ -57,7 +57,22 @@ $(function () {
                             '<option class="hold" value="hold">hold</option>' +
                             '<option class="canceled" value="canceled">canceled</option>' +
                             '</select>';
+                        percentageComplete =
+                            '<select class="form-control product-completion" id="completion_invoice_' + invoice._id + '">' +
+                            '<option class="10" value="10">10%</option>' +
+                            '<option class="20" value="20">20%</option>' +
+                            '<option class="30" value="30">30%</option>' +
+                            '<option class="40" value="40">40%</option>' +
+                            '<option class="50" value="50">50%</option>' +
+                            '<option class="60" value="60">60%</option>' +
+                            '<option class="70" value="70">70%</option>' +
+                            '<option class="80" value="80">80%</option>' +
+                            '<option class="90" value="90">90%</option>' +
+                            '<option class="100" value="100">100%</option>' +
+                            '</select>';
+
                     } else {
+                        percentageComplete = '<div class="product-completion">' + invoice.completion + '</div>';
                         prodStatus = '<div class="product-status">' + invoice.status + '</div>';
                     }
 
@@ -75,13 +90,19 @@ $(function () {
                         invoice.quantity +
                         '</div>' +
                         '<div id="invoice_price_' + invoice._id + '" class="product-line-price">' + invoice.price + '</div>' +
+                        percentageComplete +
                         prodStatus +
                         '</div>'
                     );
                     if (currentUserRole === "seller") {
                         $('#status_invoice_' + invoice._id + ' .' + invoice.status).attr('selected', 'selected');
                         $(document).on('change', '#status_invoice_' + invoice._id, function () {
-                            updateOrder(invoice._id, $('#status_invoice_' + invoice._id).val());
+                            updateOrder(invoice._id, $('#status_invoice_' + invoice._id).val(), "status");
+                        });
+
+                        $('#completion_invoice_' + invoice._id + ' .' + invoice.completion).attr('selected', 'selected');
+                        $(document).on('change', '#completion_invoice_' + invoice._id, function () {
+                            updateOrder(invoice._id, $('#completion_invoice_' + invoice._id).val(), "completion");
                         });
 
                     }
@@ -101,11 +122,17 @@ $(function () {
 
     getOrders(1);
 
-    updateOrder = function(id, val){
+    updateOrder = function (id, val, field) {
         let data = {
             _id: id,
-            status: val
         };
+
+        if (field == "status") {
+            data.status = val;
+        } else {
+            data.completion = val;
+        }
+
         $.ajax({
             url: "http://localhost:3000/orders/status",
             type: 'PUT',
@@ -115,7 +142,7 @@ $(function () {
                 $('#msg').append(
                     '<div class="alert alert-success alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                    '<strong>Congratulation! </strong>Status has been updated' +
+                    '<strong>Congratulation! </strong>Invoice has been updated successfully' +
                     '</div>'
                 );
             },

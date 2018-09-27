@@ -32,12 +32,12 @@
 
 .product-image {
 	float: left;
-	width: 20%;
+	width: 18%;
 }
 
 .product-details {
 	float: left;
-	width: 37%;
+	width: 26%;
 }
 
 .product-price {
@@ -47,7 +47,7 @@
 
 .product-quantity {
 	float: left;
-	width: 10%;
+	width: 8%;
 }
 
 .product-removal {
@@ -55,9 +55,15 @@
 	width: 9%;
 }
 
+.product-completion {
+	float: left;
+	margin: 0 1%;
+	width: 8%;
+}
+
 .product-status {
 	float: right;
-	width: 9%;
+	width: 14%;
 }
 
 .product-line-price {
@@ -217,10 +223,10 @@ label {
 	}
 	.product-price {
 		clear: both;
-		width: 70px;
+		width: 33%;
 	}
 	.product-quantity {
-		width: 100px;
+		width: 33%;
 	}
 	.product-quantity input {
 		margin-left: 20px;
@@ -235,7 +241,10 @@ label {
 		width: auto;
 	}	
 	.product-line-price {
-		width: 70px;
+		width: 33%;
+	}
+	.product-completion {
+		width: 40%;
 	}
 }
 
