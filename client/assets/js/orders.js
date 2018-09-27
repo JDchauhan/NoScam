@@ -135,6 +135,15 @@ $(function () {
                 );
             },
             error: function (xhr, textStatus, errorThrown) {
+                if(xhr.readyState === 0){
+                    return $('#msg').append(
+                        '<div class="alert alert-danger alert-dismissible fade show">' +
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                        '<strong>Oops! </strong>Network Error' +
+                        '</div>'
+                    );
+                }
+
                 let errMsg = xhr.responseJSON.message;
                 errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
 
