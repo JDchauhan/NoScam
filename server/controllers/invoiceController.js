@@ -273,12 +273,40 @@ module.exports.getOrders = function (req, res) {
                         isNext: null
                     };
 
-                    if(results.totalPages - req.params.page > 0){
+                    if (results.totalPages - req.params.page > 0) {
                         results.isNext = true;
                     }
-                        
+
                     return responses.successMsg(res, results);
                 });
         });
+    });
+};
+
+module.exports.updateOrderStatus = function (req, res) {
+    AuthoriseUser.getUser(req, res, function (user) {
+        if (user.role !== "seller") {
+            return responses.errorMsg(res, 401, "Unauthorized", "user is not a seller.", null);
+        }
+
+        Invoice.findOneAndUpdate({
+            _id: req.body._id,
+            seller: user._id
+        },{
+            status: req.body.status
+        }, function(err, invoice){
+            if (err) {
+                console.log(err);
+                return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            }
+
+            if (!invoice) {
+                return responses.errorMsg(res, 404, "Not Found", "invoice not found.", null);
+            }
+
+            return responses.successMsg(res, null);
+        });
+
+
     });
 };

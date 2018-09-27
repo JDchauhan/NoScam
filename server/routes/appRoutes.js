@@ -51,6 +51,8 @@ module.exports = function (app) {
 
     app.put('/cart/checkout', VerifyToken, Invoice.checkout);
 
+    app.put('/orders/status', VerifyToken, Invoice.updateOrderStatus);
+
     app.get('/orders/:page', VerifyToken, Invoice.getOrders);
 
 
