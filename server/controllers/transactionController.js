@@ -71,8 +71,8 @@ exports.stripePayment = function (req, res) {
     const token = req.body.token.id; // Using Express
     const charge = stripe.charges.create({
         amount: req.body.amount,
-        currency: 'usd',
-        description: 'Example charge',
+        currency: 'inr',
+        description: 'add money',
         source: token,
     }, function (err, charge) {
         if (err) {
@@ -84,7 +84,7 @@ exports.stripePayment = function (req, res) {
 
         Transaction.create({
             email: req.body.token.email,
-            amount: req.body.amount,
+            amount: req.body.amount / 100,
             txnID: charge.id
         }, function (err, response) {
             if (err) {
@@ -92,6 +92,6 @@ exports.stripePayment = function (req, res) {
             }
         });
 
-        userController.addMoney(req, res, req.body.token.email, req.body.amount);
+        userController.addMoney(req, res, req.body.token.email, req.body.amount / 100);
     });
 };

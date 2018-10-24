@@ -67,13 +67,14 @@ $(function () {
 
         var handler = StripeCheckout.configure({
             key: 'pk_test_a09RA0CrRjZQFvHO1gcQ1way',
-            image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+            image: 'https://raw.githubusercontent.com/JDchauhan/dev-screenshots/03d23ae0e3e63430990287e5d30204d186b1dd83/public/Hexerve.png',
             locale: 'auto',
+            currency: 'INR',
             token: function (token) {
                 $.ajax({
                     url: "http://localhost:3000/payment/stripe",
                     type: 'POST',
-                    data: JSON.stringify({token:token, amount: RequestData.amount}),
+                    data: JSON.stringify({token:token, amount: RequestData.amount * 100}),
                     contentType: 'application/json',
                     success: function (result) {
                         console.log("success");
@@ -90,7 +91,7 @@ $(function () {
             name: 'Hexerve',
             description: 'Screenshot taker tool',
             zipCode: true,
-            amount: RequestData.amount,
+            amount: RequestData.amount * 100,
             email: RequestData.email
         });
         e.preventDefault();
