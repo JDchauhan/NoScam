@@ -22,7 +22,7 @@ $(function () {
         };
         console.log({data: JSON.stringify(data)})
         $.ajax({
-            url: "http://localhost:3000/login",
+            url: "https://screenshot.hexerve.com/noscam/:8000/login",
             type: "POST",
             data: JSON.stringify(data),
             contentType: 'application/json',
@@ -45,7 +45,7 @@ $(function () {
 });
 
 $("#register-btn").click(function () {
-    $.post("http://localhost:3000/user", {
+    $.post("https://screenshot.hexerve.com/noscam/:8000/user", {
             email: $('#email').val(),
             password: $('#password').val(),
             fname: $('#fname').val(),

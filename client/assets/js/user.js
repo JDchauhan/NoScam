@@ -7,7 +7,7 @@ $(function () {
                 'authorization': getCookie("token")
             }
         });
-        $.get("http://localhost:3000/user", {},
+        $.get("https://screenshot.hexerve.com/noscam/:8000/user", {},
             function (data, status, xhr) {
                 console.log(data);
                 let fname = data.results.user.fname;
@@ -52,7 +52,7 @@ $(function () {
             }
         });
         $.ajax({
-            url: "http://localhost:3000/user",
+            url: "https://screenshot.hexerve.com/noscam/:8000/user",
             type: 'PUT',
             data: JSON.stringify(data),
             contentType: 'application/json',

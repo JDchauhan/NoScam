@@ -20,7 +20,7 @@ $(function () {
                 'authorization': getCookie("token")
             }
         });
-        $.get("http://localhost:3000/user", {},
+        $.get("https://screenshot.hexerve.com/noscam/:8000/user", {},
             function (data, status, xhr) {
                 console.log(data);
                 let fname = data.results.user.fname;
@@ -72,7 +72,7 @@ $(function () {
             currency: 'INR',
             token: function (token) {
                 $.ajax({
-                    url: "http://localhost:3000/payment/stripe",
+                    url: "https://screenshot.hexerve.com/noscam/:8000/payment/stripe",
                     type: 'POST',
                     data: JSON.stringify({token:token, amount: RequestData.amount * 100}),
                     contentType: 'application/json',
@@ -117,7 +117,7 @@ function payumoney() {
     }
 
     // API call to get the Hash value
-    fetch('http://localhost:3000/payment/payumoney', {
+    fetch('https://screenshot.hexerve.com/noscam/:8000/payment/payumoney', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -135,7 +135,7 @@ function payumoney() {
             console.log(RequestData);
             bolt.launch(RequestData, {
                 responseHandler: function (response) {
-                    fetch('http://localhost:3000/payment/payumoney/response', {
+                    fetch('https://screenshot.hexerve.com/noscam/:8000/payment/payumoney/response', {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',

@@ -10,7 +10,7 @@ $(function () {
                 'authorization': getCookie("token")
             }
         });
-        $.get("http://localhost:3000/user", {},
+        $.get("https://screenshot.hexerve.com/noscam/:8000/user", {},
             function (data, status, xhr) {
                 console.log(data);
                 let fname = data.results.user.fname;
@@ -52,7 +52,7 @@ $(function () {
         };
 
         $.ajax({
-            url: "http://localhost:3000/cart",
+            url: "https://screenshot.hexerve.com/noscam/:8000/cart",
             type: 'POST',
             data: JSON.stringify(data),
             contentType: 'application/json',
@@ -84,7 +84,7 @@ $(function () {
         };
 
         $.ajax({
-            url: "http://localhost:3000/products",
+            url: "https://screenshot.hexerve.com/noscam/:8000/products",
             type: 'DELETE',
             data: JSON.stringify(data),
             contentType: 'application/json',
@@ -129,7 +129,7 @@ $(function () {
     }
 
     nextProducts = function(page) {
-        $.get("http://localhost:3000/products/" + page, {},
+        $.get("https://screenshot.hexerve.com/noscam/:8000/products/" + page, {},
             function (data, status, xhr) {
                 console.log(data);
                 data.results.products.forEach(product => {
@@ -189,7 +189,7 @@ $(function () {
     };
 
         getSellerNextProducts = function(page, currentUserID){
-            $.get("http://localhost:3000/products/" + page + "/seller/" + currentUserID, {},
+            $.get("https://screenshot.hexerve.com/noscam/:8000/products/" + page + "/seller/" + currentUserID, {},
                 function (data, status, xhr) {
                     console.log(data);
                     data.results.products.forEach(product => {
@@ -275,7 +275,7 @@ $(function () {
         $(document).on('click', '#product-add-btn', function () {
             window.location.href = "#";
 
-            $.post("http://localhost:3000/products", {
+            $.post("https://screenshot.hexerve.com/noscam/:8000/products", {
                     name: $('#pname').val(),
                     price: $('#price').val(),
                     description: $('#description').val(),
@@ -318,7 +318,7 @@ $(function () {
             window.location.href = "#";
 
             $.ajax({
-                url: "http://localhost:3000/products",
+                url: "https://screenshot.hexerve.com/noscam/:8000/products",
                 type: 'PUT',
                 data: JSON.stringify(data),
                 contentType: 'application/json',

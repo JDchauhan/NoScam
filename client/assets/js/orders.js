@@ -10,7 +10,7 @@ $(function () {
                 'authorization': getCookie("token")
             }
         });
-        $.get("http://localhost:3000/user", {},
+        $.get("https://screenshot.hexerve.com/noscam/:8000/user", {},
             function (data, status, xhr) {
                 console.log(data);
                 let fname = data.results.user.fname;
@@ -35,7 +35,7 @@ $(function () {
     }
 
     getOrders = function (page) {
-        $.get("http://localhost:3000/orders/" + page, {},
+        $.get("https://screenshot.hexerve.com/noscam/:8000/orders/" + page, {},
             function (data, status, xhr) {
                 console.log(data);
 
@@ -122,7 +122,7 @@ $(function () {
         }
 
         $.ajax({
-            url: "http://localhost:3000/orders/status",
+            url: "https://screenshot.hexerve.com/noscam/:8000/orders/status",
             type: 'PUT',
             data: JSON.stringify(data),
             contentType: 'application/json',
