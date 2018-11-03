@@ -173,7 +173,7 @@ $(function () {
         };
 
         $.ajax({
-            url: baseUrl + "checkout",
+            url: baseUrl + "cart/checkout",
             type: 'PUT',
             data: JSON.stringify(data),
             contentType: 'application/json',
