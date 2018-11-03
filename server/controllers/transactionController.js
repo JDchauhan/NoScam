@@ -15,12 +15,10 @@ exports.payUMoneyPayment = function (req, res) {
         res.send("Mandatory fields missing");
     } else {
         var pd = req.body;
-        var hashString = 'eolzYsVq' + // Merchant Key 
-            '|' + pd.txnid +
-            '|' + pd.amount + '|' + pd.productinfo + '|' +
-            pd.firstname + '|' + pd.email + '|' +
-            '||||||||||' +
-            '1iMiPKZ9hO' // Your salt value
+        var hashString = config.merchantKey + '|' + pd.txnid + '|' +
+            pd.amount + '|' + pd.productinfo + '|' + pd.firstname + '|' +
+            pd.email + '|' + '||||||||||' + config.merchantSalt;
+            
         var sha = new jsSHA('SHA-512', "TEXT");
         sha.update(hashString)
         var hash = sha.getHash("HEX");
@@ -33,7 +31,10 @@ exports.payUMoneyPayment = function (req, res) {
 exports.payUMoneyPaymentResponse = function (req, res) {
     var pd = req.body;
     //Generate new Hash 
-    var hashString = '1iMiPKZ9hO' + '|' + pd.status + '||||||||||' + '|' + pd.email + '|' + pd.firstname + '|' + pd.productinfo + '|' + pd.amount + '|' + pd.txnid + '|' + 'eolzYsVq'
+    var hashString = config.merchantSalt + '|' + pd.status + '||||||||||' + '|' +
+        pd.email + '|' + pd.firstname + '|' + pd.productinfo + '|' + pd.amount + '|' +
+        pd.txnid + '|' + config.merchantKey;
+
     var sha = new jsSHA('SHA-512', "TEXT");
     sha.update(hashString)
     var hash = sha.getHash("HEX");
