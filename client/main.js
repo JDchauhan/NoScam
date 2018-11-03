@@ -1,3 +1,6 @@
+// var baseUrl = 'https://screenshot.hexerve.com/noscam/:8000/';
+var baseUrl = 'localhost:3000/';
+
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));

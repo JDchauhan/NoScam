@@ -9,7 +9,7 @@ $(function () {
                 'authorization': getCookie("token")
             }
         });
-        $.get("https://screenshot.hexerve.com/noscam/:8000/user", {},
+        $.get(baseUrl + "user", {},
             function (data, status, xhr) {
                 console.log(data);
                 let fname = data.results.user.fname;
@@ -57,7 +57,7 @@ $(function () {
         };
 
         $.ajax({
-            url: "https://screenshot.hexerve.com/noscam/:8000/cart",
+            url: baseUrl + "cart",
             type: 'PUT',
             data: JSON.stringify(data),
             contentType: 'application/json',
@@ -76,7 +76,7 @@ $(function () {
         };
 
         $.ajax({
-            url: "https://screenshot.hexerve.com/noscam/:8000/cart",
+            url: baseUrl + "cart",
             type: 'DELETE',
             data: JSON.stringify(data),
             contentType: 'application/json',
@@ -111,7 +111,7 @@ $(function () {
         });
     };
 
-    $.get("https://screenshot.hexerve.com/noscam/:8000/cart", {},
+    $.get(baseUrl + "cart", {},
         function (data, status, xhr) {
             console.log(data);
 
@@ -173,7 +173,7 @@ $(function () {
         };
 
         $.ajax({
-            url: "https://screenshot.hexerve.com/noscam/:8000/cart/checkout",
+            url: baseUrl + "checkout",
             type: 'PUT',
             data: JSON.stringify(data),
             contentType: 'application/json',
