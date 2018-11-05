@@ -102,21 +102,21 @@ exports.stripePayment = function (req, res) {
 };
 
 exports.paytmPayment = function (req, res) {
-    let orderID = 'order_' + new Date().getTime();
-    let params = {
-        'MID': config.paytmMerchantID,
-        'ORDER_ID': orderID,
-        'CUST_ID': req.body.email,
-        'TXN_AMOUNT': req.body.amount,
-        'CHANNEL_ID': 'WEB',
-        'WEBSITE': 'WEBSTAGING',
-        'INDUSTRY_TYPE_ID': 'Retail',
-        // 'CALLBACK_URL': 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=' + orderID,
-        'CALLBACK_URL': 'http://hexervesolutions.com/a?ORDER_ID=' + orderID,
+    let orderID = 'order_' + req.body.email + '_' + new Date().getTime();
+        let params = {
+            'MID': config.paytmMerchantID,
+            'ORDER_ID': orderID,
+            'CUST_ID': req.body.email,
+            'TXN_AMOUNT': req.body.amount,
+            'CHANNEL_ID': 'WEB',
+            'WEBSITE': 'WEBSTAGING',
+            'INDUSTRY_TYPE_ID': 'Retail',
+            'CALLBACK_URL': 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=' + orderID,
+            // 'CALLBACK_URL': 'http://hexervesolutions.com/a?ORDER_ID=' + orderID,
 
-        // 'txn_url': "https://securegw-stage.paytm.in/theia/processTransaction", // for staging
-        // 'txn_url': "https://securegw.paytm.in/theia/processTransaction", // for prod
-    };
+            // 'txn_url': "https://securegw-stage.paytm.in/theia/processTransaction", // for staging
+            // 'txn_url': "https://securegw.paytm.in/theia/processTransaction", // for prod
+        };
 
     Checksum.genchecksum(params, config.paytmSecretKey, function (err, checksum) {
         if (err) {
@@ -149,18 +149,20 @@ exports.paytmPaymentResponse = function (req, res) {
         },
         function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                // Transaction.create({
-                //     email: req.body.email,
-                //     amount: parseFloat(body.TXNAMOUNT),
-                //     txnID: body.TXNID
-                // }, function (err, response) {
-                //     if (err) {
-                //         console.log(err);
-                //     }
-                // });
+                let email = body.ORDERID.substring(body.ORDERID.indexOf('_') + 1, body.ORDERID.lastIndexOf('_'));
+                Transaction.create({
+                    email: email,
+                    amount: parseFloat(body.TXNAMOUNT),
+                    txnID: body.TXNID
+                }, function (err, response) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(response);
+                });
 
-                // userController.addMoney(req, res, (email), body.TXNAMOUNT);
-console.log(body)
+                userController.addMoney(req, res, email, body.TXNAMOUNT);
+                console.log(body)
             } else {
                 console.log(error);
             }
