@@ -6,7 +6,11 @@ var userController = require('../controllers/userController');
 var config = require('../config');
 
 var stripe = require("stripe")(config.stripeKey);
+var request = require('request');
+var Checksum = require('../helper/paytm/checksum');
 
+var responses = require('../helper/responses');
+var errors, results;
 
 var jsSHA = require("jssha");
 exports.payUMoneyPayment = function (req, res) {
@@ -18,7 +22,7 @@ exports.payUMoneyPayment = function (req, res) {
         var hashString = config.merchantKey + '|' + pd.txnid + '|' +
             pd.amount + '|' + pd.productinfo + '|' + pd.firstname + '|' +
             pd.email + '|' + '||||||||||' + config.merchantSalt;
-            
+
         var sha = new jsSHA('SHA-512', "TEXT");
         sha.update(hashString)
         var hash = sha.getHash("HEX");
@@ -26,7 +30,7 @@ exports.payUMoneyPayment = function (req, res) {
             'hash': hash
         });
     }
-}
+};
 
 exports.payUMoneyPaymentResponse = function (req, res) {
     var pd = req.body;
@@ -95,4 +99,72 @@ exports.stripePayment = function (req, res) {
 
         userController.addMoney(req, res, req.body.token.email, req.body.amount / 100);
     });
+};
+
+exports.paytmPayment = function (req, res) {
+    let orderID = 'order_' + new Date().getTime();
+    let params = {
+        'MID': config.paytmMerchantID,
+        'ORDER_ID': orderID,
+        'CUST_ID': req.body.email,
+        'TXN_AMOUNT': req.body.amount,
+        'CHANNEL_ID': 'WEB',
+        'WEBSITE': 'WEBSTAGING',
+        'INDUSTRY_TYPE_ID': 'Retail',
+        // 'CALLBACK_URL': 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=' + orderID,
+        'CALLBACK_URL': 'http://hexervesolutions.com/a?ORDER_ID=' + orderID,
+
+        // 'txn_url': "https://securegw-stage.paytm.in/theia/processTransaction", // for staging
+        // 'txn_url': "https://securegw.paytm.in/theia/processTransaction", // for prod
+    };
+
+    Checksum.genchecksum(params, config.paytmSecretKey, function (err, checksum) {
+        if (err) {
+            return res.send({
+                'status': "Error occured"
+            });
+        }
+        params.CHECKSUMHASH = checksum;
+
+        return responses.successMsg(res, params);
+    });
+};
+
+exports.paytmPaymentResponse = function (req, res) {
+    console.log(req.body);
+    let isValid = Checksum.verifychecksum(req.body, config.paytmSecretKey);
+    if (!isValid) {
+        return res.send({
+            'status': "Error occured"
+        });
+    }
+
+    request.post(
+        'https://securegw-stage.paytm.in/merchant-status/getTxnStatus', {
+            json: {
+                "MID": config.paytmMerchantID,
+                "ORDERID": req.body.ORDERID,
+                "CHECKSUMHASH": req.body.CHECKSUMHASH
+            }
+        },
+        function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                // Transaction.create({
+                //     email: req.body.email,
+                //     amount: parseFloat(body.TXNAMOUNT),
+                //     txnID: body.TXNID
+                // }, function (err, response) {
+                //     if (err) {
+                //         console.log(err);
+                //     }
+                // });
+
+                // userController.addMoney(req, res, (email), body.TXNAMOUNT);
+console.log(body)
+            } else {
+                console.log(error);
+            }
+        }
+    );
+
 };

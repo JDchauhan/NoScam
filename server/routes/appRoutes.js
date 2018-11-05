@@ -61,10 +61,13 @@ module.exports = function (app) {
     //transactions
     app.post('/payment/payumoney',transactionController.payUMoneyPayment);
 
+    app.post('/payment/paytm', VerifyToken, transactionController.paytmPayment);
+
     app.post('/payment/stripe',transactionController.stripePayment);
 
     app.post('/payment/payumoney/response', transactionController.payUMoneyPaymentResponse);
 
+    app.post('/payment/paytm/response', transactionController.paytmPaymentResponse);
     
     // star routes
     app.get('*', function (req, res) {
