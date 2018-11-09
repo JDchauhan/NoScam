@@ -29,8 +29,13 @@ $(function () {
                 currentUserRole = data.results.user.role;
 
             }).fail(function (xhr, status, error) {
-            window.location.href = "../";
-            setCookie("token", "", -1);
+            var errMsg;
+            if (xhr.status === 0) {
+                errMsg = "Network error.";
+            } else {
+                window.location.href = "../";
+                setCookie("token", "", -1);
+            }
         });
     }
 
@@ -135,7 +140,7 @@ $(function () {
                 );
             },
             error: function (xhr, textStatus, errorThrown) {
-                if(xhr.readyState === 0){
+                if (xhr.readyState === 0) {
                     return $('#msg').append(
                         '<div class="alert alert-danger alert-dismissible fade show">' +
                         '<button type="button" class="close" data-dismiss="alert">&times;</button>' +

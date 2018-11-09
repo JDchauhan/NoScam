@@ -28,8 +28,13 @@ $(function () {
                 currentUserRole = data.results.user.role;
 
             }).fail(function (xhr, status, error) {
-            window.location.href = "../";
-            setCookie("token", "", -1);
+            var errMsg;
+            if (xhr.status === 0) {
+                errMsg = "Network error.";
+            } else {
+                window.location.href = "../";
+                setCookie("token", "", -1);
+            }
         });
     }
 
@@ -98,9 +103,17 @@ $(function () {
                 $('#prod_' + id).remove();
             },
             error: function (xhr, textStatus, errorThrown) {
-                let errMsg = xhr.responseJSON.message;
-                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                var errMsg;
+                if (xhr.status === 0) {
+                    errMsg = "Network error.";
+                } else {
+                    errMsg = JSON.parse(xhr.responseText).message;
+                    errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
 
+                    if (errMsg === 'Validation failed.') {
+                        errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                    }
+                }
                 $('#cart-err').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
@@ -187,9 +200,17 @@ $(function () {
                 );
             },
             error: function (xhr, textStatus, errorThrown) {
-                let errMsg = xhr.responseJSON.message;
-                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                var errMsg;
+                if (xhr.status === 0) {
+                    errMsg = "Network error.";
+                } else {
+                    errMsg = JSON.parse(xhr.responseText).message;
+                    errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
 
+                    if (errMsg === 'Validation failed.') {
+                        errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                    }
+                }
                 $('#cart-err').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +

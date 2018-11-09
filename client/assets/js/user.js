@@ -32,9 +32,13 @@ $(function () {
                     $('.cart').hide();
                 }
             }).fail(function (xhr, status, error) {
-
-            setCookie("token", "", -1);
-            window.location.href = "../";
+            var errMsg;
+            if (xhr.status === 0) {
+                errMsg = "Network error.";
+            } else {
+                setCookie("token", "", -1);
+                window.location.href = "../";
+            }
         });
     }
 
@@ -65,18 +69,17 @@ $(function () {
                 );
             },
             error: function (xhr, textStatus, errorThrown) {
-                if (xhr.readyState === 0) {
-                    return $('#msg').append(
-                        '<div class="alert alert-danger alert-dismissible fade show">' +
-                        '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                        '<strong>Oops! </strong>Network Error' +
-                        '</div>'
-                    );
+                var errMsg;
+                if (xhr.status === 0) {
+                    errMsg = "Network error.";
+                } else {
+                    errMsg = JSON.parse(xhr.responseText).message;
+                    errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                    if (errMsg === 'Validation failed.') {
+                        errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                    }
                 }
-
-                let errMsg = xhr.responseJSON.message;
-                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-
                 $('#msg').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +

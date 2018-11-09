@@ -41,9 +41,13 @@ $(function () {
                     $('.cart').hide();
                 }
             }).fail(function (xhr, status, error) {
-
-            setCookie("token", "", -1);
-            window.location.href = "../";
+            var errMsg;
+            if (xhr.status === 0) {
+                errMsg = "Network error.";
+            } else {
+                setCookie("token", "", -1);
+                window.location.href = "../";
+            }
         });
     }
 
@@ -74,13 +78,43 @@ $(function () {
                 $.ajax({
                     url: baseUrl + "payment/stripe",
                     type: 'POST',
-                    data: JSON.stringify({token:token, amount: RequestData.amount * 100}),
+                    data: JSON.stringify({
+                        token: token,
+                        amount: RequestData.amount * 100
+                    }),
                     contentType: 'application/json',
                     success: function (result) {
-                        console.log("success");
+                        if (result && result.status === 200) {
+                            $('.alert').hide(500);
+                            $('#msg').append(
+                                '<div class="alert alert-success alert-dismissible fade show">' +
+                                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                '<strong>Congratulation! </strong>Payment has been successfully processed' +
+                                '</div>'
+                            );
+                        }
                     },
                     error: function (xhr, textStatus, errorThrown) {
-                        console.log("error");
+                        var errMsg;
+                        if (xhr.status === 0) {
+                            errMsg = "Network error.";
+                        } else {
+                            errMsg = JSON.parse(xhr.responseText).message;
+                            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                            if (errMsg === 'Validation failed.') {
+                                errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                            }
+
+                            $('.alert').hide(500);
+                            $('#msg').append(
+                                '<div class="alert alert-danger alert-dismissible fade show">' +
+                                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                '<strong>Oops! </strong> ' + errMsg +
+                                '</div>'
+                            );
+
+                        }
                     }
                 });
             }
@@ -102,8 +136,57 @@ $(function () {
         handler.close();
     });
 
-});
+    $(document).on('click', '#paytm_payment', function () {
+        if ($('#amount').val() && $('#amount').val() >= 1) {
+            RequestData.amount = $('#amount').val();
+        } else {
+            alert("Please enter an amount");
+            return;
+        }
 
+        let data = {
+            'email': RequestData.email,
+            'amount': RequestData.amount,
+            'firstname': RequestData.firstname
+        };
+
+        $.ajax({
+            url: baseUrl + "payment/paytm",
+            type: 'POST',
+            cors: true,
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function (response) {
+                if (response.status === 200) {
+                    $('#checkout').empty();
+                    $('#checkout').empty();
+                    $('#payment-container').hide();
+                    $('#checkout').show();
+                    $('#checkout').append(
+                        '<h1>Please do not refresh this page...</h1>' +
+                        '<form method="post" action="' + 'https://securegw-stage.paytm.in/theia/processTransaction' + '" name="f1">' +
+                        '<input type="hidden" name="MID" value="' + response.results.MID + '">' +
+                        '<input type="hidden" name="ORDER_ID" value="' + response.results.ORDER_ID + '">' +
+                        '<input type="hidden" name="CUST_ID" value="' + response.results.CUST_ID + '">' +
+                        '<input type="hidden" name="TXN_AMOUNT" value="' + response.results.TXN_AMOUNT + '">' +
+                        '<input type="hidden" name="CHANNEL_ID" value="' + response.results.CHANNEL_ID + '">' +
+                        '<input type="hidden" name="WEBSITE" value="' + response.results.WEBSITE + '">' +
+                        '<input type="hidden" name="INDUSTRY_TYPE_ID" value="' + response.results.INDUSTRY_TYPE_ID + '">' +
+                        '<input type="hidden" name="CALLBACK_URL" value="' + response.results.CALLBACK_URL + '">' +
+                        '<input type="hidden" name="CHECKSUMHASH" value="' + response.results.CHECKSUMHASH + '">' +
+                        '</form>'
+                    );
+                    document.f1.submit();
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log("error");
+            }
+        });
+
+    });
+
+});
 
 //get hash for payment
 function payumoney() {
@@ -147,7 +230,15 @@ function payumoney() {
                             return a.json();
                         })
                         .then(function (json) {
-                            console.log(json);
+                            if (json && json.status === 200) {
+                                $('.alert').hide(500);
+                                $('#msg').append(
+                                    '<div class="alert alert-success alert-dismissible fade show">' +
+                                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                                    '<strong>Congratulation! </strong>Payment has been successfully processed' +
+                                    '</div>'
+                                );
+                            }
                         });
                 },
                 catchException: function (BOLT) {

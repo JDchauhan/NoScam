@@ -79,18 +79,24 @@
     <div class="container spacer"></div>
 
     <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-
-                <div class="form-group">
-                    <label for="amount">Add Amount:</label>
-                    <input class="form-control" id="amount" min="1" type="number" placeholder="Amount" />
-                </div>
-                <div class="">
-                    <button class="btn btn-success" id="stripe_payment">Pay via Stripe</button>
-                    <button class="btn btn-success" id="payment">Pay via PayU money</button>
+        <div id="payment-container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="msg"></div>
+                    <div class="form-group">
+                        <label for="amount">Add Amount:</label>
+                        <input class="form-control" id="amount" min="1" type="number" placeholder="Amount" />
+                    </div>
+                    <div class="">
+                        <button class="btn btn-success" class="pay" id="stripe_payment">Pay via Stripe</button>
+                        <button class="btn btn-success" class="pay" id="paytm_payment">Pay via PayTM</button>
+                        <button class="btn btn-success" class="pay" id="payment">Pay via PayU money</button>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div id="checkout">
+
         </div>
     </div>
 

@@ -26,9 +26,13 @@ $(function () {
                 loadHome(data.results.user.role);
 
             }).fail(function (xhr, status, error) {
-
-            setCookie("token", "", -1);
-            window.location.href = "../";
+            var errMsg;
+            if (xhr.status === 0) {
+                errMsg = "Network error.";
+            } else {
+                setCookie("token", "", -1);
+                window.location.href = "../";
+            }
         });
     }
 
@@ -66,8 +70,17 @@ $(function () {
                 );
             },
             error: function (xhr, textStatus, errorThrown) {
-                var errMsg = JSON.parse(xhr.responseText).message;
-                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                var errMsg;
+                if (xhr.status === 0) {
+                    errMsg = "Network error.";
+                } else {
+                    errMsg = JSON.parse(xhr.responseText).message;
+                    errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                    if (errMsg === 'Validation failed.') {
+                        errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                    }
+                }
                 $('#buyer-dashboard-err').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
@@ -102,8 +115,17 @@ $(function () {
                 listMyProducts(currentUserID);
             },
             error: function (xhr, textStatus, errorThrown) {
-                var errMsg = JSON.parse(xhr.responseText).message;
-                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                var errMsg;
+                if (xhr.status === 0) {
+                    errMsg = "Network error.";
+                } else {
+                    errMsg = JSON.parse(xhr.responseText).message;
+                    errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                    if (errMsg === 'Validation failed.') {
+                        errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                    }
+                }
                 $('.updateProduct').hide();
                 $('.addProduct').show();
 
@@ -128,7 +150,7 @@ $(function () {
         }
     }
 
-    nextProducts = function(page) {
+    nextProducts = function (page) {
         $.get(baseUrl + "products/" + page, {},
             function (data, status, xhr) {
                 console.log(data);
@@ -161,7 +183,7 @@ $(function () {
                         '</figcaption>' +
                         '</figure>'
                     );
-                    
+
                     $('[data-toggle="popover"]').popover({
                         html: true,
                         content: function () {
@@ -181,78 +203,78 @@ $(function () {
                 });
                 $('#buyer_prod_next').attr('onclick', 'nextProducts(' + (page + 1) + ')');
                 if (data.results.isNext === null) {
-                    $('#buyer_prod_next').attr('style','display:none');    
+                    $('#buyer_prod_next').attr('style', 'display:none');
                 }
             }).fail(function (xhr, status, error) {
             console.log(error);
         });
     };
 
-        getSellerNextProducts = function(page, currentUserID){
-            $.get(baseUrl + "products/" + page + "/seller/" + currentUserID, {},
-                function (data, status, xhr) {
-                    console.log(data);
-                    data.results.products.forEach(product => {
-                        if (!product.image) {
-                            product.image = "../assets/images/test.jpg";
-                        }
-                        var description = "";
-                        if (product.description && product.description !== "") {
-                            description = '<div> Description: ' + product.description + '</div>';
-                        }
-
-                        $('.seller').text("Your Products");
-                        $('.listProducts').append(
-                            '<figure class="col-md-4">' +
-                            '<a data-toggle="popover" data-img="' + product.image + '" title="' + product.name + '"' +
-
-                            'data-id="' + product._id + '"' + 'data-name="' + product.name + '"' + 'data-price="' + product.price + '"' +
-                            'data-cc="' + product.cc + '"' + 'data-description="' + product.description + '"' +
-
-                            'data-placement="bottom" data-text="' +
-                            '<div>' +
-                            "Price: " + product.price +
-                            '</div>' +
-                            description +
-                            '">' +
-                            '<img alt="' + product.name + '" src=' + product.image + ' class="img-fluid">' +
-                            '</a>' +
-                            '<figcaption class="figure-caption text-right">' +
-                            '<div>' +
-                            product.name +
-                            '</div>' +
-                            '<div>' +
-                            product.price +
-                            '</div>' +
-                            '</figcaption>' +
-                            '</figure>'
-                        );
-                        $('[data-toggle="popover"]').popover({
-                            html: true,
-                            content: function () {
-                                return '<img src="' + $(this).data('img') + '" height="40px" width="40px"/>' +
-                                    '<div>' + $(this).data('text') + '</div>' +
-
-                                    '<button class="btn btn-success edit_btn" onclick=editProduct("' + $(this).data('id') + '","' +
-                                    $(this).data('name') + '",' + $(this).data('price') + ',"' +
-                                    $(this).data('description') + '","' + $(this).data('image') + '",' +
-                                    $(this).data('cc') + ')> Edit </button>' +
-
-                                    '<button class="btn btn-danger" onclick=deleteProduct("' + $(this).data('id') + '")> Delete </button>';
-                            }
-                        });
-
-                        $('#btn_update_form').addClass("btn-success");
-                    });
-                    $('#seller_prod_next').attr('onclick', 'getSellerNextProducts(' + (page + 1) + ',"' + currentUserID + '")');
-                    if (data.results.isNext === null) {
-                        $('#seller_prod_next').attr('style','display:none');    
+    getSellerNextProducts = function (page, currentUserID) {
+        $.get(baseUrl + "products/" + page + "/seller/" + currentUserID, {},
+            function (data, status, xhr) {
+                console.log(data);
+                data.results.products.forEach(product => {
+                    if (!product.image) {
+                        product.image = "../assets/images/test.jpg";
                     }
-                }).fail(function (xhr, status, error) {
-                $('.listProducts').empty();
-                $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
-            });
-        };
+                    var description = "";
+                    if (product.description && product.description !== "") {
+                        description = '<div> Description: ' + product.description + '</div>';
+                    }
+
+                    $('.seller').text("Your Products");
+                    $('.listProducts').append(
+                        '<figure class="col-md-4">' +
+                        '<a data-toggle="popover" data-img="' + product.image + '" title="' + product.name + '"' +
+
+                        'data-id="' + product._id + '"' + 'data-name="' + product.name + '"' + 'data-price="' + product.price + '"' +
+                        'data-cc="' + product.cc + '"' + 'data-description="' + product.description + '"' +
+
+                        'data-placement="bottom" data-text="' +
+                        '<div>' +
+                        "Price: " + product.price +
+                        '</div>' +
+                        description +
+                        '">' +
+                        '<img alt="' + product.name + '" src=' + product.image + ' class="img-fluid">' +
+                        '</a>' +
+                        '<figcaption class="figure-caption text-right">' +
+                        '<div>' +
+                        product.name +
+                        '</div>' +
+                        '<div>' +
+                        product.price +
+                        '</div>' +
+                        '</figcaption>' +
+                        '</figure>'
+                    );
+                    $('[data-toggle="popover"]').popover({
+                        html: true,
+                        content: function () {
+                            return '<img src="' + $(this).data('img') + '" height="40px" width="40px"/>' +
+                                '<div>' + $(this).data('text') + '</div>' +
+
+                                '<button class="btn btn-success edit_btn" onclick=editProduct("' + $(this).data('id') + '","' +
+                                $(this).data('name') + '",' + $(this).data('price') + ',"' +
+                                $(this).data('description') + '","' + $(this).data('image') + '",' +
+                                $(this).data('cc') + ')> Edit </button>' +
+
+                                '<button class="btn btn-danger" onclick=deleteProduct("' + $(this).data('id') + '")> Delete </button>';
+                        }
+                    });
+
+                    $('#btn_update_form').addClass("btn-success");
+                });
+                $('#seller_prod_next').attr('onclick', 'getSellerNextProducts(' + (page + 1) + ',"' + currentUserID + '")');
+                if (data.results.isNext === null) {
+                    $('#seller_prod_next').attr('style', 'display:none');
+                }
+            }).fail(function (xhr, status, error) {
+            $('.listProducts').empty();
+            $('.listProducts').append('<h1>Oops! Some error occured</h1><div class="col-md-12">Unable to fetch your products at this moment</div>');
+        });
+    };
 
     function loadHome(role) {
         if (role === "buyer") {
@@ -294,8 +316,17 @@ $(function () {
                     listMyProducts(currentUserID);
 
                 }).fail(function (xhr, status, error) {
-                var errMsg = JSON.parse(xhr.responseText).message;
-                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                var errMsg;
+                if (xhr.status === 0) {
+                    errMsg = "Network error.";
+                } else {
+                    errMsg = JSON.parse(xhr.responseText).message;
+                    errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                    if (errMsg === 'Validation failed.') {
+                        errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                    }
+                }
                 $('#product-add-err').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
@@ -336,6 +367,17 @@ $(function () {
                     listMyProducts(currentUserID);
                 },
                 error: function (xhr, textStatus, errorThrown) {
+                    var errMsg;
+                    if (xhr.status === 0) {
+                        errMsg = "Network error.";
+                    } else {
+                        errMsg = JSON.parse(xhr.responseText).message;
+                        errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                        if (errMsg === 'Validation failed.') {
+                            errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                        }
+                    }
                     var errMsg = JSON.parse(xhr.responseText).message;
                     errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
                     $('#product-update-err').append(

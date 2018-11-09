@@ -20,9 +20,28 @@ $(function () {
             email: $('#login-email').val(),
             password: $('#login-password').val()
         };
-        console.log({
-            data: JSON.stringify(data)
-        })
+        if (!isEmail(data.email)) {
+            $('.alert').hide(500);
+            $('#login-err').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong> Invalid email.' +
+                '</div>'
+            );
+            return;
+        }
+
+        if (!isPass(data.password)) {
+            $('.alert').hide(500);
+            $('#login-err').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong> Invalid password(password must be greater than 8 characters)' +
+                '</div>'
+            );
+            return;
+        }
+
         $.ajax({
             url: baseUrl + "login",
             type: "POST",
@@ -33,8 +52,18 @@ $(function () {
                 window.location.href = "pages/dashboard.html";
             },
             error: function (xhr, textStatus, errorThrown) {
-                var errMsg = JSON.parse(xhr.responseText).message;
-                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+                var errMsg;
+                if (xhr.status === 0) {
+                    errMsg = "Network error.";
+                } else {
+                    errMsg = JSON.parse(xhr.responseText).message;
+                    errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                    if (errMsg === 'Validation failed.') {
+                        errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                    }
+                }
+                $('.alert').hide(500);
                 $('#login-err').append(
                     '<div class="alert alert-danger alert-dismissible fade show">' +
                     '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
@@ -46,15 +75,60 @@ $(function () {
     });
 
     $("#register-btn").click(function () {
-        $.post(baseUrl + "user", {
-                email: $('#email').val(),
-                password: $('#password').val(),
-                fname: $('#fname').val(),
-                lname: $('#lname').val(),
-                mname: $('#mname').val(),
-                role: $('#role').val(),
-                mobile: $('#mobile').val()
-            },
+        let data = {
+            email: $('#email').val(),
+            password: $('#password').val(),
+            fname: $('#fname').val(),
+            lname: $('#lname').val(),
+            mname: $('#mname').val(),
+            role: $('#role').val(),
+            mobile: $('#mobile').val()
+        };
+        if (!isText(data.name)) {
+            $('.alert').hide(500);
+            $('#register-msg').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong> Invalid name(must be greater than 3 characters)' +
+                '</div>'
+            );
+            return;
+        }
+
+        if (!isEmail(data.email)) {
+            $('.alert').hide(500);
+            $('#register-msg').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong> Invalid email.' +
+                '</div>'
+            );
+            return;
+        }
+
+        if (!isMobile(data.mobile)) {
+            $('.alert').hide(500);
+            $('#register-msg').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong> Invalid mobile.' +
+                '</div>'
+            );
+            return;
+        }
+
+        if (!isPass(data.password)) {
+            $('.alert').hide(500);
+            $('#register-msg').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong> Invalid password(password must be greater than 8 characters)' +
+                '</div>'
+            );
+            return;
+        }
+
+        $.post(baseUrl + "user", data,
             function (data, status, xhr) {
                 console.log(data);
                 $(".register-form").hide();
@@ -70,12 +144,23 @@ $(function () {
                 //setCookie("token", data.results.token, 1);
                 //window.location.href = "pages/dashboard.html";
             }).fail(function (xhr, status, error) {
-            var errMsg = JSON.parse(xhr.responseText).message;
-            errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
-            $('#registration-err').append(
+            var errMsg;
+            if (xhr.status === 0) {
+                errMsg = "Network error.";
+            } else {
+                errMsg = JSON.parse(xhr.responseText).message;
+                errMsg = errMsg.charAt(0).toUpperCase() + errMsg.substr(1);
+
+                if (errMsg === 'Validation failed.') {
+                    errMsg += '<br/>Incorrect ' + JSON.parse(xhr.responseText).errors.index.join(", ");
+                }
+            }
+
+            $('.alert').hide(500);
+            $('#register-err').append(
                 '<div class="alert alert-danger alert-dismissible fade show">' +
                 '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                '<strong>Oops! </strong>' + errMsg +
+                '<strong>Oops! </strong> ' + errMsg +
                 '</div>'
             );
             window.location.href = "#";
