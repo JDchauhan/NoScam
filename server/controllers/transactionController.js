@@ -180,7 +180,7 @@ exports.paytmPaymentResponse = function (req, res) {
                         if (!result) {
                             return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
                         } else {
-                            return responses.successMsg(res, "payment succesfully completed"); //redirect to payment page
+                            return res.redirect('http://localhost/kontact%20services/NoScam/client/pages/paytmResponse.html'); //redirect to payment page
                         }
                     });
                 });
