@@ -227,7 +227,7 @@ module.exports.deduct = function (req, res, userID, invoices, balance, amount, t
     });
 };
 
-module.exports.addMoney = function(req, res, email, amount){
+module.exports.addMoney = function(req, res, email, amount, callback){
     User.findOneAndUpdate({
         email: email
     }, {
@@ -235,10 +235,9 @@ module.exports.addMoney = function(req, res, email, amount){
     },
     function (err, user) {
         if (err) {
-            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            return callback(0);
         } else {
-
-            return responses.successMsg(res, null);
+            return callback(1);
         }
     });
 }

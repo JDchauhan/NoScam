@@ -60,7 +60,13 @@ exports.payUMoneyPaymentResponse = function (req, res) {
                     'status': "Error occured"
                 });
             } else {
-                userController.addMoney(req, res, pd.email, pd.net_amount_debit);
+                userController.addMoney(req, res, pd.email, pd.net_amount_debit, function (result) {
+                    if (!result) {
+                        return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                    } else {
+                        return responses.successMsg(res, null);
+                    }
+                });
             }
         })
     } else {
@@ -94,29 +100,40 @@ exports.stripePayment = function (req, res) {
         }, function (err, response) {
             if (err) {
                 console.log(err);
+                return res.send({
+                    'status': "Error occured"
+                });
+            } else {
+                userController.addMoney(req, res, req.body.token.email, req.body.amount / 100, function (result) {
+                    if (!result) {
+                        return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                    } else {
+                        return responses.successMsg(res, null);
+                    }
+                });
             }
-        });
 
-        userController.addMoney(req, res, req.body.token.email, req.body.amount / 100);
+        });
     });
 };
 
 exports.paytmPayment = function (req, res) {
     let orderID = 'order_' + req.body.email + '_' + new Date().getTime();
-        let params = {
-            'MID': config.paytmMerchantID,
-            'ORDER_ID': orderID,
-            'CUST_ID': req.body.email,
-            'TXN_AMOUNT': req.body.amount,
-            'CHANNEL_ID': 'WEB',
-            'WEBSITE': 'WEBSTAGING',
-            'INDUSTRY_TYPE_ID': 'Retail',
-            'CALLBACK_URL': 'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=' + orderID,
-            // 'CALLBACK_URL': 'http://hexervesolutions.com/a?ORDER_ID=' + orderID,
-
-            // 'txn_url': "https://securegw-stage.paytm.in/theia/processTransaction", // for staging
-            // 'txn_url': "https://securegw.paytm.in/theia/processTransaction", // for prod
-        };
+    let params = {
+        'MID': config.paytmMerchantID,
+        'ORDER_ID': orderID,
+        'CUST_ID': req.body.email,
+        'TXN_AMOUNT': req.body.amount,
+        'CHANNEL_ID': 'WEB',
+        'WEBSITE': 'WEBSTAGING',
+        'INDUSTRY_TYPE_ID': 'Retail',
+        'CALLBACK_URL': 'https://screenshot.hexerve.com/noscam/:8000/payment/paytm/response',
+        //'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=' + orderID,
+        // 'CALLBACK_URL': 'http://hexervesolutions.com/a?ORDER_ID=' + orderID,
+        // https://developer.paytm.com/txn-response
+        // 'txn_url': "https://securegw-stage.paytm.in/theia/processTransaction", // for staging
+        // 'txn_url': "https://securegw.paytm.in/theia/processTransaction", // for prod
+    };
 
     Checksum.genchecksum(params, config.paytmSecretKey, function (err, checksum) {
         if (err) {
@@ -131,7 +148,6 @@ exports.paytmPayment = function (req, res) {
 };
 
 exports.paytmPaymentResponse = function (req, res) {
-    console.log(req.body);
     let isValid = Checksum.verifychecksum(req.body, config.paytmSecretKey);
     if (!isValid) {
         return res.send({
@@ -159,10 +175,16 @@ exports.paytmPaymentResponse = function (req, res) {
                         console.log(err);
                     }
                     console.log(response);
+
+                    userController.addMoney(req, res, email, body.TXNAMOUNT, function (result) {
+                        if (!result) {
+                            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                        } else {
+                            return responses.successMsg(res, "payment succesfully completed"); //redirect to payment page
+                        }
+                    });
                 });
 
-                userController.addMoney(req, res, email, body.TXNAMOUNT);
-                console.log(body)
             } else {
                 console.log(error);
             }
