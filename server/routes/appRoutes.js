@@ -1,7 +1,7 @@
 'use strict';
 module.exports = function (app) {
     let serverPath = '';
-    // serverPath = '/noscam/:8000';    
+    serverPath = '/noscam/:8000';    
 
     var VerifyToken = require('../helper/verifyToken');
     var responses = require('../helper/responses');

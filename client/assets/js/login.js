@@ -84,12 +84,32 @@ $(function () {
             role: $('#role').val(),
             mobile: $('#mobile').val()
         };
-        if (!isText(data.name)) {
+        if (!isText(data.fname)) {
             $('.alert').hide(500);
             $('#register-msg').append(
                 '<div class="alert alert-danger alert-dismissible fade show">' +
                 '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
-                '<strong>Oops! </strong> Invalid name(must be greater than 3 characters)' +
+                '<strong>Oops! </strong> Invalid first name(must be greater than 3 characters)' +
+                '</div>'
+            );
+            return;
+        }
+        if (!isText(data.mname)) {
+            $('.alert').hide(500);
+            $('#register-msg').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong> Invalid middle name(must be greater than 3 characters)' +
+                '</div>'
+            );
+            return;
+        }
+        if (!isText(data.lname)) {
+            $('.alert').hide(500);
+            $('#register-msg').append(
+                '<div class="alert alert-danger alert-dismissible fade show">' +
+                '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                '<strong>Oops! </strong> Invalid last name(must be greater than 3 characters)' +
                 '</div>'
             );
             return;
