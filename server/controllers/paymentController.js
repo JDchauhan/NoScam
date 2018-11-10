@@ -9,7 +9,7 @@ var AuthoriseUser = require('../helper/authoriseUser');
 
 var errors, results;
 
-module.exports.create = function (req, res, userID, invoices, price, tax, serviceCharges, bill) {
+module.exports.create = function (req, res, userID, email, invoices, price, tax, serviceCharges, bill) {
 
     Payment.create({
         invoices: invoices,
@@ -38,6 +38,6 @@ module.exports.create = function (req, res, userID, invoices, price, tax, servic
                 return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
             }
         }
-        Invoice.finalizeCheckout(req, res);
+        Invoice.finalizeCheckout(req, res, bill, email);
     });
 };

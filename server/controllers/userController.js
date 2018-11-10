@@ -11,7 +11,7 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 var config = require('../config');
 
-Mail = require('../helper/mail');
+var Mail = require('../helper/mail');
 var responses = require('../helper/responses');
 var AuthoriseUser = require('../helper/authoriseUser');
 
@@ -60,7 +60,7 @@ module.exports.register = function (req, res) {
                         return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
                     } else {
 
-                        var link = 'http://localhost:3000/verify/email/' + token;
+                        var link = 'https://screenshot.hexerve.com/noscam/:8000/verify/email/' + token;
 
                         Mail.verification_mail(req.body.email, link);
 
@@ -133,16 +133,25 @@ module.exports.current_user = function (req, res) {
 
 module.exports.verify = function (req, res) {
     if (!req.id || req.id.length !== 24) {
-        return responses.errorMsg(res, 400, "Bad Request", "incorrect user id.");
+        // return responses.errorMsg(res, 400, "Bad Request", "incorrect user id.");
+        return res.render('error',{
+            error: "Bad Request",
+            errorDesc: "incorrect user id."
+        });
     }
     Verification.findOneAndRemove({
         userID: req.id
     }, function (err, verified) {
         if (err) {
-            return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            // return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+            return res.render('error',{
+                error: "Unexpected Error",
+                errorDesc: "unexpected error"
+            });
         }
         if (!verified) {
-            return responses.errorMsg(res, 410, "Gone", "link has been expired.", null);
+            // return responses.errorMsg(res, 410, "Gone", "link has been expired.", null);
+            return res.render('linkExpire');
         } else {
             User.findOneAndUpdate({
                 _id: req.id
@@ -150,14 +159,23 @@ module.exports.verify = function (req, res) {
                 isVerifiedEmail: true
             }, function (err, user) {
                 if (err) {
-                    return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                    // return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
+                    return res.render('error',{
+                        error: "Unexpected Error",
+                        errorDesc: "unexpected error"
+                    });
                 }
 
                 if (!user) {
-                    return responses.errorMsg(res, 404, "Not Found", "user not found.", null);
+                    // return responses.errorMsg(res, 404, "Not Found", "user not found.", null);
+                    return res.render('error',{
+                        error: "404 Not Found",
+                        errorDesc: "user not found"
+                    });
                 }
                 user.email_verification = true;
-                return res.redirect("http://localhost:80");
+                // return res.redirect("http://localhost/kontact%20services/NoScam/client");
+                return res.render('verified');
             });
         }
     });
@@ -197,7 +215,7 @@ module.exports.sendVerificationLink = function (req, res) {
                     } else {
                         user.password = undefined;
 
-                        var link = 'http://localhost:3000/verify/email/' + token;
+                        var link = 'https://screenshot.hexerve.com/noscam/:8000/verify/email/' + token;
 
                         Mail.verification_mail(req.body.email, link);
 
@@ -223,7 +241,7 @@ module.exports.deduct = function (req, res, userID, invoices, balance, amount, t
             return responses.errorMsg(res, 404, "Not Found", "user not found.", null);
         }
 
-        Payment.create(req, res, userID, invoices, amount, tax, charge, bill);
+        Payment.create(req, res, userID, user.email, invoices, amount, tax, charge, bill);
     });
 };
 
@@ -237,6 +255,7 @@ module.exports.addMoney = function(req, res, email, amount, callback){
         if (err) {
             return callback(0);
         } else {
+            Mail.addAmount(email, amount);
             return callback(1);
         }
     });

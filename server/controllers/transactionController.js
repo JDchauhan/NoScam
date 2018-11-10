@@ -150,8 +150,9 @@ exports.paytmPayment = function (req, res) {
 exports.paytmPaymentResponse = function (req, res) {
     let isValid = Checksum.verifychecksum(req.body, config.paytmSecretKey);
     if (!isValid) {
-        return res.send({
-            'status': "Error occured"
+        return res.render('error', {
+            error: 'error occured',
+            errorDesc: 'Checksum failed'
         });
     }
 
@@ -172,7 +173,10 @@ exports.paytmPaymentResponse = function (req, res) {
                     txnID: body.TXNID
                 }, function (err, response) {
                     if (err) {
-                        console.log(err);
+                        return res.render('error', {
+                            error: 'some error occured',
+                            errorDesc: err
+                        });
                     }
                     console.log(response);
 
@@ -180,13 +184,16 @@ exports.paytmPaymentResponse = function (req, res) {
                         if (!result) {
                             return responses.errorMsg(res, 500, "Unexpected Error", "unexpected error.", null);
                         } else {
-                            return res.redirect('http://localhost/kontact%20services/NoScam/client/pages/paytmResponse.html'); //redirect to payment page
+                            return res.render('paymentSuccess');
                         }
                     });
                 });
 
             } else {
-                console.log(error);
+                return res.render('error',{
+                    error: 'some error occured',
+                    errorDesc: 'error occured processing your request in paytm site'
+                });
             }
         }
     );

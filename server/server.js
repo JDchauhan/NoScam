@@ -9,6 +9,9 @@ mongoose.connect(process.env.DB_CONNECTION_NOSCAM, {
     useNewUrlParser: true
 });
 
+app.use(express.static("public"));
+app.set("view engine", "ejs");
+
 app.use(bodyParser.urlencoded({
     limit: '50mb',
     extended: true

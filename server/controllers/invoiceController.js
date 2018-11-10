@@ -7,6 +7,7 @@ Invoice = mongoose.model('invoice');
 
 var User = require('../controllers/userController');
 
+var Mail = require('../helper/mail');
 var responses = require('../helper/responses');
 var AuthoriseUser = require('../helper/authoriseUser');
 
@@ -193,7 +194,7 @@ module.exports.checkout = function (req, res) {
     });
 };
 
-module.exports.finalizeCheckout = function (req, res) {
+module.exports.finalizeCheckout = function (req, res, bill, email) {
     Invoice.updateMany({
         isOrderPlaced: false
     }, {
@@ -207,7 +208,7 @@ module.exports.finalizeCheckout = function (req, res) {
         if (!invoice) {
             return responses.errorMsg(res, 404, "Not Found", "order not found.", null);
         }
-
+        Mail.invoice(email, bill);
         return responses.successMsg(res, null);
     });
 };
